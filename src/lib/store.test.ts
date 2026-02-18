@@ -1,5 +1,4 @@
 import { Store } from "./store"
-import type { Project, Subscription } from "./types"
 
 describe("Store", () => {
   let store: Store
@@ -29,7 +28,7 @@ describe("Store", () => {
 
     it("deletes a project and unassigns its subscriptions", () => {
       const project = store.addProject({ name: "Test", description: "", color: "#000" })
-      const sub = store.addSubscription({
+      store.addSubscription({
         name: "Vercel Pro", provider: "Vercel", cost: 20,
         billingCycle: "monthly", category: "hosting", projectId: project.id, isActive: true,
       })
