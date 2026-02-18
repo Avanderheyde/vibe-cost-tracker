@@ -87,26 +87,27 @@ export class Store {
     this.save()
   }
 
-  private toMonthly(cost: number, cycle: BillingCycle): number {
-    return cycle === "yearly" ? cost / 12 : cost
+  private toMonthly(cost: number, quantity: number, cycle: BillingCycle): number {
+    const total = cost * quantity
+    return cycle === "yearly" ? total / 12 : total
   }
 
   getMonthlyTotal(): number {
     return this.data.subscriptions
       .filter((s) => s.isActive)
-      .reduce((sum, s) => sum + this.toMonthly(s.cost, s.billingCycle), 0)
+      .reduce((sum, s) => sum + this.toMonthly(s.cost, s.quantity ?? 1, s.billingCycle), 0)
   }
 
   getMonthlyTotalByProject(projectId: string | null): number {
     return this.data.subscriptions
       .filter((s) => s.isActive && s.projectId === projectId)
-      .reduce((sum, s) => sum + this.toMonthly(s.cost, s.billingCycle), 0)
+      .reduce((sum, s) => sum + this.toMonthly(s.cost, s.quantity ?? 1, s.billingCycle), 0)
   }
 
   getTotalsByCategory(): Record<string, number> {
     const totals: Record<string, number> = {}
     for (const sub of this.data.subscriptions.filter((s) => s.isActive)) {
-      const monthly = this.toMonthly(sub.cost, sub.billingCycle)
+      const monthly = this.toMonthly(sub.cost, sub.quantity ?? 1, sub.billingCycle)
       totals[sub.category] = (totals[sub.category] || 0) + monthly
     }
     return totals

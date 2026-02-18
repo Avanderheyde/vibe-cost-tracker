@@ -51,12 +51,13 @@ export default function SubscriptionsPage() {
   const [name, setName] = useState("")
   const [provider, setProvider] = useState("")
   const [cost, setCost] = useState("")
+  const [quantity, setQuantity] = useState("1")
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly")
   const [category, setCategory] = useState<Category>("other")
   const [projectId, setProjectId] = useState<string>("none")
 
   const resetForm = () => {
-    setName(""); setProvider(""); setCost(""); setBillingCycle("monthly")
+    setName(""); setProvider(""); setCost(""); setQuantity("1"); setBillingCycle("monthly")
     setCategory("other"); setProjectId("none"); setEditingId(null)
   }
 
@@ -66,6 +67,7 @@ export default function SubscriptionsPage() {
       name: name.trim(),
       provider: provider.trim(),
       cost: parseFloat(cost),
+      quantity: parseInt(quantity) || 1,
       billingCycle,
       category,
       projectId: projectId === "none" ? null : projectId,
@@ -85,6 +87,7 @@ export default function SubscriptionsPage() {
       name: item.name,
       provider: item.provider,
       cost: item.cost,
+      quantity: 1,
       billingCycle: item.billingCycle,
       category: item.category,
       projectId: null,
@@ -97,6 +100,7 @@ export default function SubscriptionsPage() {
     setName(sub.name)
     setProvider(sub.provider)
     setCost(sub.cost.toString())
+    setQuantity((sub.quantity ?? 1).toString())
     setBillingCycle(sub.billingCycle)
     setCategory(sub.category)
     setProjectId(sub.projectId || "none")
@@ -135,10 +139,14 @@ export default function SubscriptionsPage() {
                   <Input id="sub-provider" value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Company" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sub-cost">Cost ($)</Label>
                   <Input id="sub-cost" type="number" step="0.01" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="0.00" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sub-quantity">Qty / Seats</Label>
+                  <Input id="sub-quantity" type="number" min="1" step="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="1" />
                 </div>
                 <div className="space-y-2">
                   <Label>Billing Cycle</Label>
@@ -268,7 +276,12 @@ export default function SubscriptionsPage() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">
-                      ${sub.cost.toFixed(2)}/{sub.billingCycle === "monthly" ? "mo" : "yr"}
+                      <div>${((sub.quantity ?? 1) * sub.cost).toFixed(2)}/{sub.billingCycle === "monthly" ? "mo" : "yr"}</div>
+                      {(sub.quantity ?? 1) > 1 && (
+                        <div className="text-xs text-muted-foreground">
+                          {sub.quantity} &times; ${sub.cost.toFixed(2)}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant={sub.isActive ? "default" : "secondary"}>

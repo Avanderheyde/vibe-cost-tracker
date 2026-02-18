@@ -26,7 +26,7 @@ export const catalog: CatalogItem[] = [
   { name: "Railway Pro", provider: "Railway", cost: 5, billingCycle: "monthly", category: "hosting" },
   { name: "Fly.io", provider: "Fly.io", cost: 5, billingCycle: "monthly", category: "hosting" },
   { name: "Cloudflare Pro", provider: "Cloudflare", cost: 20, billingCycle: "monthly", category: "hosting" },
-  { name: "Notion Plus", provider: "Notion", cost: 10, billingCycle: "monthly", category: "saas" },
+  { name: "Notion Plus", provider: "Notion", cost: 12, billingCycle: "monthly", category: "saas" },
   { name: "Eleven Labs Starter", provider: "Eleven Labs", cost: 5, billingCycle: "monthly", category: "saas" },
   { name: "Eleven Labs Creator", provider: "Eleven Labs", cost: 22, billingCycle: "monthly", category: "saas" },
   { name: "Google Workspace Starter", provider: "Google", cost: 7.20, billingCycle: "monthly", category: "saas" },

@@ -13,6 +13,7 @@ export interface Subscription {
   name: string
   provider: string
   cost: number
+  quantity: number
   billingCycle: BillingCycle
   category: Category
   projectId: string | null
