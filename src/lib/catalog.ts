@@ -1,40 +1,541 @@
 import type { BillingCycle, Category } from "./types"
 
+export interface CatalogTier {
+  label: string
+  cost: number
+  billingCycle: BillingCycle
+}
+
 export interface CatalogItem {
   name: string
   provider: string
-  cost: number
-  billingCycle: BillingCycle
   category: Category
+  description: string
+  detail: string
+  tiers: CatalogTier[]
 }
 
 export const catalog: CatalogItem[] = [
-  { name: "Claude Pro", provider: "Anthropic", cost: 20, billingCycle: "monthly", category: "llm" },
-  { name: "Claude Max (5x)", provider: "Anthropic", cost: 100, billingCycle: "monthly", category: "llm" },
-  { name: "Claude Max (20x)", provider: "Anthropic", cost: 200, billingCycle: "monthly", category: "llm" },
-  { name: "ChatGPT Plus", provider: "OpenAI", cost: 20, billingCycle: "monthly", category: "llm" },
-  { name: "ChatGPT Pro", provider: "OpenAI", cost: 200, billingCycle: "monthly", category: "llm" },
-  { name: "Gemini Advanced", provider: "Google", cost: 20, billingCycle: "monthly", category: "llm" },
-  { name: "Cursor Pro", provider: "Cursor", cost: 20, billingCycle: "monthly", category: "tools" },
-  { name: "Windsurf Pro", provider: "Codeium", cost: 15, billingCycle: "monthly", category: "tools" },
-  { name: "GitHub Copilot", provider: "GitHub", cost: 10, billingCycle: "monthly", category: "tools" },
-  { name: "Tailscale Personal Plus", provider: "Tailscale", cost: 6, billingCycle: "monthly", category: "tools" },
-  { name: "Warp Terminal", provider: "Warp", cost: 15, billingCycle: "monthly", category: "tools" },
-  { name: "Supabase Pro", provider: "Supabase", cost: 25, billingCycle: "monthly", category: "hosting" },
-  { name: "Vercel Pro", provider: "Vercel", cost: 20, billingCycle: "monthly", category: "hosting" },
-  { name: "Netlify Pro", provider: "Netlify", cost: 19, billingCycle: "monthly", category: "hosting" },
-  { name: "Railway Pro", provider: "Railway", cost: 5, billingCycle: "monthly", category: "hosting" },
-  { name: "Fly.io", provider: "Fly.io", cost: 5, billingCycle: "monthly", category: "hosting" },
-  { name: "Cloudflare Pro", provider: "Cloudflare", cost: 20, billingCycle: "monthly", category: "hosting" },
-  { name: "Notion Plus", provider: "Notion", cost: 12, billingCycle: "monthly", category: "saas" },
-  { name: "Eleven Labs Starter", provider: "Eleven Labs", cost: 5, billingCycle: "monthly", category: "saas" },
-  { name: "Eleven Labs Creator", provider: "Eleven Labs", cost: 22, billingCycle: "monthly", category: "saas" },
-  { name: "Google Workspace Starter", provider: "Google", cost: 7.20, billingCycle: "monthly", category: "saas" },
-  { name: "Figma Professional", provider: "Figma", cost: 15, billingCycle: "monthly", category: "saas" },
-  { name: "Linear Standard", provider: "Linear", cost: 8, billingCycle: "monthly", category: "saas" },
-  { name: "Sentry Team", provider: "Sentry", cost: 26, billingCycle: "monthly", category: "saas" },
+  // LLMs
+  { name: "Claude", provider: "Anthropic", category: "llm",
+    description: "AI assistant for writing, analysis, and coding",
+    detail: "Anthropic's conversational AI with strong reasoning, coding, and writing capabilities. Known for nuanced, safety-conscious responses.",
+    tiers: [
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+      { label: "Max (5x)", cost: 100, billingCycle: "monthly" },
+      { label: "Max (20x)", cost: 200, billingCycle: "monthly" },
+    ]},
+  { name: "ChatGPT", provider: "OpenAI", category: "llm",
+    description: "General-purpose AI chatbot",
+    detail: "OpenAI's flagship conversational AI with GPT-4o, image generation, browsing, and plugin support. The most widely adopted consumer LLM.",
+    tiers: [
+      { label: "Go", cost: 8, billingCycle: "monthly" },
+      { label: "Plus", cost: 20, billingCycle: "monthly" },
+      { label: "Pro", cost: 200, billingCycle: "monthly" },
+    ]},
+  { name: "Gemini", provider: "Google", category: "llm",
+    description: "Google's multimodal AI assistant",
+    detail: "Google's AI with deep integration into Search, Workspace, and Android. Offers multimodal understanding across text, images, and video.",
+    tiers: [
+      { label: "AI Plus", cost: 7.99, billingCycle: "monthly" },
+      { label: "AI Pro", cost: 19.99, billingCycle: "monthly" },
+      { label: "AI Ultra", cost: 249.99, billingCycle: "monthly" },
+    ]},
+  { name: "Grok", provider: "xAI", category: "llm",
+    description: "AI chatbot with real-time X integration",
+    detail: "xAI's conversational model with real-time access to X (Twitter) posts. Known for unfiltered responses and current-events awareness.",
+    tiers: [
+      { label: "SuperGrok", cost: 30, billingCycle: "monthly" },
+      { label: "SuperGrok Heavy", cost: 300, billingCycle: "monthly" },
+    ]},
+  { name: "Kimi", provider: "Moonshot AI", category: "llm",
+    description: "Long-context AI assistant",
+    detail: "Moonshot AI's chatbot specializing in extremely long context windows, ideal for processing lengthy documents and complex research tasks.",
+    tiers: [
+      { label: "Moderato", cost: 19, billingCycle: "monthly" },
+      { label: "Allegretto", cost: 39, billingCycle: "monthly" },
+      { label: "Vivace", cost: 199, billingCycle: "monthly" },
+    ]},
+  { name: "Perplexity", provider: "Perplexity", category: "llm",
+    description: "AI-powered answer engine with citations",
+    detail: "Search-focused AI that provides sourced answers with inline citations. Combines web search with LLM reasoning for research tasks.",
+    tiers: [
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+      { label: "Max", cost: 200, billingCycle: "monthly" },
+    ]},
+  { name: "Le Chat", provider: "Mistral AI", category: "llm",
+    description: "European AI assistant",
+    detail: "Mistral AI's consumer chatbot powered by their open-weight models. A European alternative focused on multilingual support and efficiency.",
+    tiers: [
+      { label: "Pro", cost: 14.99, billingCycle: "monthly" },
+    ]},
+  { name: "Poe", provider: "Quora", category: "llm",
+    description: "Multi-model AI chat platform",
+    detail: "Quora's aggregator platform providing access to multiple AI models (GPT-4, Claude, Gemini, and others) through a single subscription.",
+    tiers: [
+      { label: "Subscriber", cost: 5, billingCycle: "monthly" },
+      { label: "Standard", cost: 19.99, billingCycle: "monthly" },
+    ]},
+
+  // Coding & Dev Tools
+  { name: "Cursor", provider: "Cursor", category: "tools",
+    description: "AI-powered code editor",
+    detail: "VS Code fork with deep AI integration for code generation, editing, and chat. Uses multiple LLMs for intelligent autocomplete and refactoring.",
+    tiers: [
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+      { label: "Pro+", cost: 60, billingCycle: "monthly" },
+      { label: "Ultra", cost: 200, billingCycle: "monthly" },
+    ]},
+  { name: "Windsurf", provider: "Codeium", category: "tools",
+    description: "AI IDE with agentic coding flows",
+    detail: "Codeium's AI-native IDE combining code completion with agentic workflows that can plan and execute multi-file changes.",
+    tiers: [
+      { label: "Pro", cost: 15, billingCycle: "monthly" },
+    ]},
+  { name: "GitHub Copilot", provider: "GitHub", category: "tools",
+    description: "AI pair programmer in your editor",
+    detail: "GitHub's AI coding assistant that provides inline suggestions, chat, and code explanations. Integrates with VS Code, JetBrains, and Neovim.",
+    tiers: [
+      { label: "Pro", cost: 10, billingCycle: "monthly" },
+      { label: "Pro+", cost: 39, billingCycle: "monthly" },
+    ]},
+  { name: "Lovable", provider: "Lovable", category: "tools",
+    description: "AI full-stack app builder",
+    detail: "Prompt-to-app platform that generates full-stack web applications with UI, backend, and database from natural language descriptions.",
+    tiers: [
+      { label: "Pro", cost: 25, billingCycle: "monthly" },
+      { label: "Business", cost: 50, billingCycle: "monthly" },
+    ]},
+  { name: "v0", provider: "Vercel", category: "tools",
+    description: "AI UI component generator",
+    detail: "Vercel's generative UI tool that creates React components from prompts. Outputs production-ready code using shadcn/ui and Tailwind CSS.",
+    tiers: [
+      { label: "Premium", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Bolt.new", provider: "StackBlitz", category: "tools",
+    description: "AI app builder in the browser",
+    detail: "Browser-based AI development environment that generates, runs, and deploys full-stack apps. Powered by StackBlitz's WebContainers technology.",
+    tiers: [
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+      { label: "Pro 50", cost: 50, billingCycle: "monthly" },
+      { label: "Pro 100", cost: 100, billingCycle: "monthly" },
+      { label: "Pro 200", cost: 200, billingCycle: "monthly" },
+    ]},
+  { name: "Replit", provider: "Replit", category: "tools",
+    description: "Browser-based IDE with AI agent",
+    detail: "Cloud development platform with an AI agent that can build, debug, and deploy applications. Supports 50+ languages with instant hosting.",
+    tiers: [
+      { label: "Core", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Raycast", provider: "Raycast", category: "tools",
+    description: "Productivity launcher for macOS",
+    detail: "macOS launcher replacing Spotlight with extensible commands, snippets, and window management. Pro tier adds AI chat and translations.",
+    tiers: [
+      { label: "Pro", cost: 10, billingCycle: "monthly" },
+      { label: "Pro + AI", cost: 18, billingCycle: "monthly" },
+    ]},
+  { name: "JetBrains AI", provider: "JetBrains", category: "tools",
+    description: "AI assistant for JetBrains IDEs",
+    detail: "AI code completion, generation, and chat integrated into IntelliJ, PyCharm, WebStorm, and other JetBrains IDEs.",
+    tiers: [
+      { label: "Pro", cost: 10, billingCycle: "monthly" },
+      { label: "Ultimate", cost: 30, billingCycle: "monthly" },
+    ]},
+  { name: "Tabnine", provider: "Tabnine", category: "tools",
+    description: "AI code completion for teams",
+    detail: "Privacy-focused AI code assistant that runs locally or in your cloud. Supports personalized completions trained on your codebase.",
+    tiers: [
+      { label: "Dev", cost: 9, billingCycle: "monthly" },
+    ]},
+  { name: "Tailscale", provider: "Tailscale", category: "tools",
+    description: "Zero-config mesh VPN",
+    detail: "WireGuard-based mesh VPN that creates secure networks between your devices and servers without complex configuration.",
+    tiers: [
+      { label: "Personal Plus", cost: 5, billingCycle: "monthly" },
+    ]},
+  { name: "Warp Terminal", provider: "Warp", category: "tools",
+    description: "AI-powered modern terminal",
+    detail: "GPU-accelerated terminal with AI command suggestions, collaborative features, and a modern text-editing experience.",
+    tiers: [
+      { label: "Build", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Wispr Flow", provider: "Wispr", category: "tools",
+    description: "Voice-to-text for developers",
+    detail: "AI dictation tool optimized for coding workflows. Transcribes voice to text with context-aware formatting for code and prose.",
+    tiers: [
+      { label: "Pro", cost: 15, billingCycle: "monthly" },
+    ]},
+  { name: "SuperWhisper", provider: "SuperWhisper", category: "tools",
+    description: "Offline AI voice-to-text for macOS",
+    detail: "Local-first speech-to-text app using OpenAI Whisper models. Runs entirely on-device for fast, private transcription on macOS.",
+    tiers: [
+      { label: "Pro", cost: 8.49, billingCycle: "monthly" },
+    ]},
+  { name: "Docker Desktop", provider: "Docker", category: "tools",
+    description: "Container development environment",
+    detail: "Desktop app for building and running containers locally. Includes Docker Compose, Kubernetes, and integrated container management.",
+    tiers: [
+      { label: "Pro", cost: 9, billingCycle: "monthly" },
+    ]},
+  { name: "n8n", provider: "n8n", category: "tools",
+    description: "Workflow automation platform",
+    detail: "Open-source workflow automation tool with a visual editor. Connects APIs, databases, and services with 400+ integrations.",
+    tiers: [
+      { label: "Starter", cost: 26, billingCycle: "monthly" },
+      { label: "Pro", cost: 65, billingCycle: "monthly" },
+    ]},
+
+  // Hosting
+  { name: "AWS", provider: "Amazon", category: "hosting",
+    description: "Amazon's cloud computing platform",
+    detail: "The largest cloud provider with 200+ services including EC2, S3, Lambda, and RDS. Pay-as-you-go pricing with a broad free tier.",
+    tiers: [
+      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Azure", provider: "Microsoft", category: "hosting",
+    description: "Microsoft's cloud platform",
+    detail: "Enterprise cloud with strong .NET, Windows, and Active Directory integration. Offers VMs, App Service, Functions, and managed databases.",
+    tiers: [
+      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Google Cloud", provider: "Google", category: "hosting",
+    description: "Google's cloud infrastructure",
+    detail: "Cloud platform known for BigQuery, GKE, and AI/ML services. Strong in data analytics, Kubernetes, and global networking.",
+    tiers: [
+      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Firebase", provider: "Google", category: "hosting",
+    description: "Google's app development platform",
+    detail: "Backend-as-a-service with real-time database, authentication, hosting, cloud functions, and analytics. Popular for mobile and web apps.",
+    tiers: [
+      { label: "Blaze (pay-as-you-go)", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Supabase", provider: "Supabase", category: "hosting",
+    description: "Open-source Firebase alternative",
+    detail: "Backend-as-a-service with Postgres database, authentication, storage, edge functions, and real-time subscriptions out of the box.",
+    tiers: [
+      { label: "Pro", cost: 25, billingCycle: "monthly" },
+    ]},
+  { name: "Vercel", provider: "Vercel", category: "hosting",
+    description: "Frontend cloud platform",
+    detail: "Hosting platform optimized for Next.js and frontend frameworks. Provides edge functions, preview deployments, and global CDN.",
+    tiers: [
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Netlify", provider: "Netlify", category: "hosting",
+    description: "Web hosting with CI/CD built in",
+    detail: "Platform for deploying static sites and serverless functions with Git-based CI/CD, forms, and identity management.",
+    tiers: [
+      { label: "Personal", cost: 9, billingCycle: "monthly" },
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Railway", provider: "Railway", category: "hosting",
+    description: "Deploy anything with zero config",
+    detail: "Infrastructure platform that deploys from GitHub with automatic builds. Supports databases, cron jobs, and any Dockerfile.",
+    tiers: [
+      { label: "Hobby", cost: 5, billingCycle: "monthly" },
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Fly.io", provider: "Fly.io", category: "hosting",
+    description: "Run apps close to users globally",
+    detail: "Platform for running full-stack apps and databases at the edge. Deploys containers to data centers worldwide with low latency.",
+    tiers: [
+      { label: "", cost: 5, billingCycle: "monthly" },
+    ]},
+  { name: "Cloudflare", provider: "Cloudflare", category: "hosting",
+    description: "CDN, DNS, and edge platform",
+    detail: "Global network providing CDN, DDoS protection, DNS, Workers serverless compute, and R2 object storage.",
+    tiers: [
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+      { label: "Business", cost: 200, billingCycle: "monthly" },
+    ]},
+  { name: "Render", provider: "Render", category: "hosting",
+    description: "Unified cloud for apps and databases",
+    detail: "Cloud platform for deploying web services, static sites, cron jobs, and managed databases with simple Git-based workflows.",
+    tiers: [
+      { label: "Professional", cost: 19, billingCycle: "monthly" },
+    ]},
+  { name: "Heroku", provider: "Heroku", category: "hosting",
+    description: "Classic PaaS for web apps",
+    detail: "One of the original platform-as-a-service providers. Supports multiple languages with add-on marketplace and simple Git deploys.",
+    tiers: [
+      { label: "Eco", cost: 5, billingCycle: "monthly" },
+      { label: "Basic", cost: 7, billingCycle: "monthly" },
+    ]},
+  { name: "Coolify", provider: "Coolify", category: "hosting",
+    description: "Self-hostable PaaS alternative",
+    detail: "Open-source, self-hostable alternative to Heroku/Netlify/Vercel. Deploy apps, databases, and services on your own servers.",
+    tiers: [
+      { label: "Cloud", cost: 5, billingCycle: "monthly" },
+    ]},
+  { name: "PlanetScale", provider: "PlanetScale", category: "hosting",
+    description: "Serverless MySQL platform",
+    detail: "MySQL-compatible serverless database with branching, non-blocking schema changes, and horizontal scaling powered by Vitess.",
+    tiers: [
+      { label: "Single Node", cost: 5, billingCycle: "monthly" },
+      { label: "Scaler Pro", cost: 39, billingCycle: "monthly" },
+    ]},
+  { name: "Turso", provider: "Turso", category: "hosting",
+    description: "Edge-hosted SQLite databases",
+    detail: "SQLite-compatible database built on libSQL that replicates to edge locations. Ideal for low-latency reads close to users.",
+    tiers: [
+      { label: "Developer", cost: 4.99, billingCycle: "monthly" },
+      { label: "Scaler", cost: 25, billingCycle: "monthly" },
+    ]},
+  { name: "Koyeb", provider: "Koyeb", category: "hosting",
+    description: "Serverless platform for global apps",
+    detail: "Developer-friendly serverless platform for deploying apps, APIs, and AI workloads globally with automatic scaling and native GPU support.",
+    tiers: [
+      { label: "Pro", cost: 29, billingCycle: "monthly" },
+    ]},
+
+  // SaaS & Creative Tools
+  { name: "Obsidian", provider: "Obsidian", category: "saas",
+    description: "Local-first Markdown knowledge base",
+    detail: "Note-taking app using plain Markdown files stored locally. Supports bidirectional linking, plugins, and graph visualization. Sync is a paid add-on.",
+    tiers: [
+      { label: "Sync", cost: 4, billingCycle: "monthly" },
+      { label: "Sync + Publish", cost: 12, billingCycle: "monthly" },
+    ]},
+  { name: "Notion", provider: "Notion", category: "saas",
+    description: "All-in-one workspace for docs and projects",
+    detail: "Flexible workspace combining notes, docs, wikis, project management, and databases. Popular for team knowledge bases and planning.",
+    tiers: [
+      { label: "Plus", cost: 12, billingCycle: "monthly" },
+      { label: "Business", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Eleven Labs", provider: "Eleven Labs", category: "saas",
+    description: "AI voice synthesis and cloning",
+    detail: "AI platform for generating realistic speech, cloning voices, and creating audio content. Used for podcasts, videos, and accessibility.",
+    tiers: [
+      { label: "Starter", cost: 5, billingCycle: "monthly" },
+      { label: "Creator", cost: 22, billingCycle: "monthly" },
+    ]},
+  { name: "Google Workspace", provider: "Google", category: "saas",
+    description: "Business email, docs, and cloud storage",
+    detail: "Google's productivity suite with custom-domain Gmail, Drive, Docs, Sheets, and Meet for teams and businesses.",
+    tiers: [
+      { label: "Starter", cost: 7.20, billingCycle: "monthly" },
+      { label: "Standard", cost: 14, billingCycle: "monthly" },
+      { label: "Plus", cost: 22, billingCycle: "monthly" },
+    ]},
+  { name: "Figma", provider: "Figma", category: "saas",
+    description: "Collaborative interface design tool",
+    detail: "Browser-based design tool for UI/UX with real-time collaboration, prototyping, design systems, and developer handoff.",
+    tiers: [
+      { label: "Professional", cost: 15, billingCycle: "monthly" },
+      { label: "Organization", cost: 45, billingCycle: "monthly" },
+    ]},
+  { name: "Linear", provider: "Linear", category: "saas",
+    description: "Fast project and issue tracker",
+    detail: "Streamlined issue tracking and project management built for software teams. Known for its speed, keyboard shortcuts, and clean UI.",
+    tiers: [
+      { label: "Basic", cost: 8, billingCycle: "monthly" },
+      { label: "Business", cost: 16, billingCycle: "monthly" },
+    ]},
+  { name: "X", provider: "X", category: "saas",
+    description: "Social media and microblogging platform",
+    detail: "Social network (formerly Twitter) for real-time posts, discussions, and news. Premium tiers offer verification and enhanced features.",
+    tiers: [
+      { label: "Premium", cost: 8, billingCycle: "monthly" },
+      { label: "Premium+", cost: 40, billingCycle: "monthly" },
+    ]},
+  { name: "Midjourney", provider: "Midjourney", category: "saas",
+    description: "AI image generation from text prompts",
+    detail: "AI art generator producing high-quality images from text descriptions. Popular for concept art, illustrations, and creative exploration.",
+    tiers: [
+      { label: "Basic", cost: 10, billingCycle: "monthly" },
+      { label: "Standard", cost: 30, billingCycle: "monthly" },
+      { label: "Pro", cost: 60, billingCycle: "monthly" },
+      { label: "Mega", cost: 120, billingCycle: "monthly" },
+    ]},
+  { name: "Suno", provider: "Suno", category: "saas",
+    description: "AI music generation",
+    detail: "AI platform that generates full songs with vocals, instruments, and lyrics from text prompts. Create custom music in seconds.",
+    tiers: [
+      { label: "Pro", cost: 10, billingCycle: "monthly" },
+      { label: "Premier", cost: 30, billingCycle: "monthly" },
+    ]},
+  { name: "Kling", provider: "Kuaishou", category: "saas",
+    description: "AI video generation",
+    detail: "AI video generation platform by Kuaishou that creates short video clips from text or image prompts with realistic motion.",
+    tiers: [
+      { label: "Standard", cost: 6.99, billingCycle: "monthly" },
+      { label: "Pro", cost: 25.99, billingCycle: "monthly" },
+    ]},
+  { name: "Framer", provider: "Framer", category: "saas",
+    description: "No-code website builder for designers",
+    detail: "Visual website builder with animations, CMS, and responsive design. Aimed at designers who want production sites without coding.",
+    tiers: [
+      { label: "Basic", cost: 10, billingCycle: "monthly" },
+      { label: "Pro", cost: 30, billingCycle: "monthly" },
+    ]},
+  { name: "Mobbin", provider: "Mobbin", category: "saas",
+    description: "UI/UX design reference library",
+    detail: "Curated library of real mobile and web app screenshots for design inspiration. Browse patterns, flows, and screens from top apps.",
+    tiers: [
+      { label: "Pro", cost: 10, billingCycle: "monthly" },
+    ]},
+  { name: "ShotDeck", provider: "ShotDeck", category: "saas",
+    description: "Film cinematography reference library",
+    detail: "Searchable database of movie stills and cinematography references. Used by filmmakers and visual artists for lighting and composition research.",
+    tiers: [
+      { label: "", cost: 12.95, billingCycle: "monthly" },
+    ]},
+  { name: "Savee", provider: "Savee", category: "saas",
+    description: "Visual bookmarking for creatives",
+    detail: "Image bookmarking and mood board tool for designers and creatives. Save, organize, and share visual inspiration from the web.",
+    tiers: [
+      { label: "Pro", cost: 9, billingCycle: "monthly" },
+    ]},
+  { name: "Canva", provider: "Canva", category: "saas",
+    description: "Online graphic design platform",
+    detail: "Drag-and-drop design tool for social media graphics, presentations, posters, and marketing materials with thousands of templates.",
+    tiers: [
+      { label: "Pro", cost: 15, billingCycle: "monthly" },
+    ]},
+  { name: "Slack", provider: "Salesforce", category: "saas",
+    description: "Team messaging and communication",
+    detail: "Channel-based messaging platform for teams with file sharing, integrations, and searchable message history.",
+    tiers: [
+      { label: "Pro", cost: 8.75, billingCycle: "monthly" },
+    ]},
+  { name: "Loom", provider: "Atlassian", category: "saas",
+    description: "Async video messaging for teams",
+    detail: "Screen and camera recording tool for quick video messages. Replaces meetings with shareable, commentable video walkthroughs.",
+    tiers: [
+      { label: "Business", cost: 15, billingCycle: "monthly" },
+    ]},
+
+  // Monitoring
+  { name: "Sentry", provider: "Sentry", category: "monitoring",
+    description: "Application error tracking",
+    detail: "Error monitoring and performance tracking for web and mobile apps. Captures stack traces, breadcrumbs, and release health data.",
+    tiers: [
+      { label: "Team", cost: 26, billingCycle: "monthly" },
+      { label: "Business", cost: 80, billingCycle: "monthly" },
+    ]},
+  { name: "UptimeRobot", provider: "UptimeRobot", category: "monitoring",
+    description: "Website uptime monitoring",
+    detail: "Simple uptime monitoring service that checks your websites and APIs at regular intervals and alerts you when they go down.",
+    tiers: [
+      { label: "Solo", cost: 7, billingCycle: "monthly" },
+      { label: "Team", cost: 29, billingCycle: "monthly" },
+      { label: "Enterprise", cost: 54, billingCycle: "monthly" },
+    ]},
+  { name: "Datadog", provider: "Datadog", category: "monitoring",
+    description: "Full-stack observability platform",
+    detail: "Enterprise monitoring combining metrics, traces, logs, and security in a single platform. Covers infrastructure, APM, and real user monitoring.",
+    tiers: [
+      { label: "Pro", cost: 18, billingCycle: "monthly" },
+      { label: "Enterprise", cost: 27, billingCycle: "monthly" },
+    ]},
+  { name: "Grafana Cloud", provider: "Grafana Labs", category: "monitoring",
+    description: "Open-source metrics and dashboards",
+    detail: "Managed Grafana, Prometheus, and Loki stack for metrics visualization, log aggregation, and alerting. Built on open-source tools.",
+    tiers: [
+      { label: "Pro", cost: 19, billingCycle: "monthly" },
+    ]},
+  { name: "BetterStack", provider: "BetterStack", category: "monitoring",
+    description: "Uptime, logs, and incident management",
+    detail: "Combined uptime monitoring, log management, and incident response platform. Includes status pages and on-call scheduling.",
+    tiers: [
+      { label: "Starter", cost: 29, billingCycle: "monthly" },
+    ]},
+  { name: "Honeycomb", provider: "Honeycomb", category: "monitoring",
+    description: "Observability for distributed systems",
+    detail: "Observability platform built around high-cardinality event data and distributed tracing. Designed for debugging complex microservice architectures.",
+    tiers: [
+      { label: "Pro", cost: 130, billingCycle: "monthly" },
+    ]},
+  { name: "LogRocket", provider: "LogRocket", category: "monitoring",
+    description: "Frontend session replay and monitoring",
+    detail: "Session replay tool that records user interactions, console logs, and network requests. Helps debug frontend issues by watching what users experienced.",
+    tiers: [
+      { label: "Team", cost: 69, billingCycle: "monthly" },
+    ]},
+  { name: "Checkly", provider: "Checkly", category: "monitoring",
+    description: "Synthetic monitoring for APIs and sites",
+    detail: "Monitors APIs and web apps with Playwright-based browser checks and API assertions. Runs checks from global locations on a schedule.",
+    tiers: [
+      { label: "Starter", cost: 24, billingCycle: "monthly" },
+      { label: "Team", cost: 64, billingCycle: "monthly" },
+    ]},
+  { name: "Axiom", provider: "Axiom", category: "monitoring",
+    description: "Log management and analytics",
+    detail: "Cloud-native log management with unlimited data ingestion and retention. Query logs, traces, and events with a serverless architecture.",
+    tiers: [
+      { label: "Cloud", cost: 25, billingCycle: "monthly" },
+    ]},
+  { name: "PagerDuty", provider: "PagerDuty", category: "monitoring",
+    description: "Incident response and on-call management",
+    detail: "Incident management platform that routes alerts to on-call engineers. Handles escalation policies, schedules, and incident coordination.",
+    tiers: [
+      { label: "Professional", cost: 21, billingCycle: "monthly" },
+      { label: "Business", cost: 41, billingCycle: "monthly" },
+    ]},
+
+  // Other (Domains, Utilities, etc.)
+  { name: "Domain", provider: "", category: "other",
+    description: "Domain name registration",
+    detail: "Register a domain name. Set the TLD in the name (e.g. \"Domain (.com)\"), your registrar as the provider, and the actual renewal cost.",
+    tiers: [
+      { label: "", cost: 10, billingCycle: "yearly" },
+    ]},
+  { name: "Apple Developer Program", provider: "Apple", category: "other",
+    description: "Publish apps to the App Store",
+    detail: "Required membership for publishing apps to the iOS and macOS App Stores. Includes TestFlight beta testing and developer tools.",
+    tiers: [
+      { label: "", cost: 99, billingCycle: "yearly" },
+    ]},
+  { name: "1Password", provider: "1Password", category: "other",
+    description: "Password manager and vault",
+    detail: "Secure password manager with browser extensions, autofill, and secure sharing. Stores passwords, 2FA codes, and sensitive documents.",
+    tiers: [
+      { label: "Individual", cost: 36, billingCycle: "yearly" },
+    ]},
+  { name: "Bitwarden", provider: "Bitwarden", category: "other",
+    description: "Open-source password manager",
+    detail: "Open-source password manager with self-hosting option. Stores passwords, TOTP codes, and secure notes across all devices.",
+    tiers: [
+      { label: "Premium", cost: 10, billingCycle: "yearly" },
+    ]},
+  { name: "Fastmail", provider: "Fastmail", category: "other",
+    description: "Privacy-focused email hosting",
+    detail: "Independent email provider with custom domain support, calendar, and contacts. No ads, no tracking, with fast search.",
+    tiers: [
+      { label: "Individual", cost: 5, billingCycle: "monthly" },
+    ]},
+  { name: "Proton Mail", provider: "Proton", category: "other",
+    description: "End-to-end encrypted email",
+    detail: "Swiss-based encrypted email service with zero-access encryption. Includes calendar, drive, and VPN in higher tiers.",
+    tiers: [
+      { label: "Mail Plus", cost: 4, billingCycle: "monthly" },
+      { label: "Unlimited", cost: 10, billingCycle: "monthly" },
+    ]},
+  { name: "iCloud+", provider: "Apple", category: "other",
+    description: "Apple cloud storage and services",
+    detail: "Apple's cloud storage with iCloud Drive, Photos sync, Private Relay VPN, custom email domain, and HomeKit Secure Video.",
+    tiers: [
+      { label: "50 GB", cost: 1, billingCycle: "monthly" },
+      { label: "200 GB", cost: 3, billingCycle: "monthly" },
+      { label: "2 TB", cost: 10, billingCycle: "monthly" },
+    ]},
+  { name: "Mullvad VPN", provider: "Mullvad", category: "other",
+    description: "Privacy-first VPN service",
+    detail: "No-account VPN service focused on privacy. Uses WireGuard, accepts cash and crypto, and keeps no logs.",
+    tiers: [
+      { label: "", cost: 5.50, billingCycle: "monthly" },
+    ]},
 ]
+
+export const domainTLDs = [".com", ".dev", ".io", ".ai", ".app", ".co", ".xyz", ".sh", ".tech", ".cloud"]
+export const domainRegistrars = ["Cloudflare", "Namecheap", "Porkbun"]
 
 export function getCatalogByCategory(category: Category): CatalogItem[] {
   return catalog.filter((item) => item.category === category)
+}
+
+export function tierDisplayName(item: CatalogItem, tier: CatalogTier): string {
+  return tier.label ? `${item.name} ${tier.label}` : item.name
 }

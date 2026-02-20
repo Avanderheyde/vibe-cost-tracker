@@ -1,5 +1,5 @@
 export type BillingCycle = "monthly" | "yearly"
-export type Category = "llm" | "hosting" | "tools" | "saas" | "other"
+export type Category = "llm" | "hosting" | "tools" | "monitoring" | "saas" | "other"
 
 export interface Project {
   id: string
@@ -16,6 +16,7 @@ export interface Subscription {
   quantity: number
   billingCycle: BillingCycle
   category: Category
+  nextPaymentDate: string | null
   projectId: string | null
   isActive: boolean
 }

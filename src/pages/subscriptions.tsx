@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useStore } from "@/lib/store-context"
-import { catalog, type CatalogItem } from "@/lib/catalog"
+import { catalog, tierDisplayName, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
 import type { Category, BillingCycle } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -33,20 +33,59 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Plus, MoreHorizontal, Pencil, Trash2, Power, PowerOff } from "lucide-react"
 
+function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: CatalogItem, tier: CatalogTier) => void }) {
+  const [selectedIdx, setSelectedIdx] = useState(0)
+  const tier = item.tiers[selectedIdx]
+  const hasTiers = item.tiers.length > 1
+
+  return (
+    <Card>
+      <CardContent className="flex items-center justify-between p-4">
+        <div className="min-w-0 flex-1">
+          <div className="font-medium">{item.name}</div>
+          <div className="text-xs text-muted-foreground">{item.description}</div>
+          <div className="text-sm text-muted-foreground">
+            {item.provider ? `${item.provider} \u00b7 ` : ""}${tier.cost}/{tier.billingCycle === "monthly" ? "mo" : "yr"}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {hasTiers && (
+            <Select value={selectedIdx.toString()} onValueChange={(v) => setSelectedIdx(parseInt(v))}>
+              <SelectTrigger className="h-8 w-auto gap-1 px-2 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {item.tiers.map((t, i) => (
+                  <SelectItem key={i} value={i.toString()}>
+                    {t.label || item.name} — ${t.cost}/{t.billingCycle === "monthly" ? "mo" : "yr"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <Button size="sm" onClick={() => onAdd(item, tier)}>Add</Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 const categoryLabels: Record<string, string> = {
   llm: "LLM",
   hosting: "Hosting",
   tools: "Tools",
+  monitoring: "Monitoring",
   saas: "SaaS",
   other: "Other",
 }
 
-const categories: Category[] = ["llm", "hosting", "tools", "saas", "other"]
+const categories: Category[] = ["llm", "hosting", "tools", "monitoring", "saas", "other"]
 
 export default function SubscriptionsPage() {
   const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [quickAddProjectId, setQuickAddProjectId] = useState<string>("none")
 
   const [name, setName] = useState("")
   const [provider, setProvider] = useState("")
@@ -55,10 +94,16 @@ export default function SubscriptionsPage() {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly")
   const [category, setCategory] = useState<Category>("other")
   const [projectId, setProjectId] = useState<string>("none")
+  const [catalogDetail, setCatalogDetail] = useState("")
+  const [isDomainAdd, setIsDomainAdd] = useState(false)
+  const [domainTLD, setDomainTLD] = useState(".com")
+  const [domainRegistrar, setDomainRegistrar] = useState("Cloudflare")
+  const [nextPaymentDate, setNextPaymentDate] = useState("")
 
   const resetForm = () => {
     setName(""); setProvider(""); setCost(""); setQuantity("1"); setBillingCycle("monthly")
-    setCategory("other"); setProjectId("none"); setEditingId(null)
+    setCategory("other"); setProjectId("none"); setEditingId(null); setCatalogDetail("")
+    setIsDomainAdd(false); setDomainTLD(".com"); setDomainRegistrar("Cloudflare"); setNextPaymentDate("")
   }
 
   const handleSubmit = () => {
@@ -70,6 +115,7 @@ export default function SubscriptionsPage() {
       quantity: parseInt(quantity) || 1,
       billingCycle,
       category,
+      nextPaymentDate: nextPaymentDate || null,
       projectId: projectId === "none" ? null : projectId,
       isActive: true,
     }
@@ -82,17 +128,26 @@ export default function SubscriptionsPage() {
     resetForm()
   }
 
-  const handleAddFromCatalog = (item: CatalogItem) => {
-    addSubscription({
-      name: item.name,
-      provider: item.provider,
-      cost: item.cost,
-      quantity: 1,
-      billingCycle: item.billingCycle,
-      category: item.category,
-      projectId: null,
-      isActive: true,
-    })
+  const handleAddFromCatalog = (item: CatalogItem, tier: CatalogTier) => {
+    setEditingId(null)
+    setCost(tier.cost.toString())
+    setQuantity("1")
+    setBillingCycle(tier.billingCycle)
+    setCategory(item.category)
+    setProjectId(quickAddProjectId)
+    setCatalogDetail(item.detail)
+    if (item.name === "Domain") {
+      setIsDomainAdd(true)
+      setDomainTLD(".com")
+      setDomainRegistrar("Cloudflare")
+      setName("Domain (.com)")
+      setProvider("Cloudflare")
+    } else {
+      setIsDomainAdd(false)
+      setName(tierDisplayName(item, tier))
+      setProvider(item.provider)
+    }
+    setDialogOpen(true)
   }
 
   const handleEdit = (sub: typeof subscriptions[0]) => {
@@ -103,6 +158,7 @@ export default function SubscriptionsPage() {
     setQuantity((sub.quantity ?? 1).toString())
     setBillingCycle(sub.billingCycle)
     setCategory(sub.category)
+    setNextPaymentDate(sub.nextPaymentDate || "")
     setProjectId(sub.projectId || "none")
     setDialogOpen(true)
   }
@@ -110,8 +166,6 @@ export default function SubscriptionsPage() {
   const toggleActive = (sub: typeof subscriptions[0]) => {
     updateSubscription(sub.id, { isActive: !sub.isActive })
   }
-
-  const addedNames = new Set(subscriptions.map((s) => s.name))
 
   return (
     <div className="space-y-8">
@@ -129,23 +183,67 @@ export default function SubscriptionsPage() {
               <DialogTitle>{editingId ? "Edit Subscription" : "Add Subscription"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="sub-name">Name</Label>
-                  <Input id="sub-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Service name" />
+              {catalogDetail && (
+                <p className="text-sm text-muted-foreground">{catalogDetail}</p>
+              )}
+              {isDomainAdd && !editingId ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>TLD</Label>
+                    <Select value={domainTLD} onValueChange={(v) => {
+                      setDomainTLD(v)
+                      if (v !== "other") setName(`Domain (${v})`)
+                    }}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {domainTLDs.map((tld) => (
+                          <SelectItem key={tld} value={tld}>{tld}</SelectItem>
+                        ))}
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {domainTLD === "other" && (
+                      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Domain (.net)" />
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Registrar</Label>
+                    <Select value={domainRegistrar} onValueChange={(v) => {
+                      setDomainRegistrar(v)
+                      if (v !== "other") setProvider(v)
+                    }}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {domainRegistrars.map((r) => (
+                          <SelectItem key={r} value={r}>{r}</SelectItem>
+                        ))}
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {domainRegistrar === "other" && (
+                      <Input value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Registrar name" />
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sub-provider">Provider</Label>
-                  <Input id="sub-provider" value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Company" />
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="sub-name">Name</Label>
+                    <Input id="sub-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Service name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="sub-provider">Provider</Label>
+                    <Input id="sub-provider" value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Company" />
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sub-cost">Cost ($)</Label>
                   <Input id="sub-cost" type="number" step="0.01" value={cost} onChange={(e) => setCost(e.target.value)} placeholder="0.00" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="sub-quantity">Qty / Seats</Label>
+                  <Label htmlFor="sub-quantity">{billingCycle === "yearly" ? "Years" : "Qty / Seats"}</Label>
                   <Input id="sub-quantity" type="number" min="1" step="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="1" />
                 </div>
                 <div className="space-y-2">
@@ -184,6 +282,10 @@ export default function SubscriptionsPage() {
                   </Select>
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="sub-next-payment">Next Payment Date</Label>
+                <Input id="sub-next-payment" type="date" value={nextPaymentDate} onChange={(e) => setNextPaymentDate(e.target.value)} />
+              </div>
             </div>
             <DialogFooter>
               <DialogClose asChild>
@@ -196,7 +298,21 @@ export default function SubscriptionsPage() {
       </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold">Quick Add from Catalog</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Quick Add from Catalog</h2>
+          <div className="flex items-center gap-2">
+            <Label className="text-sm text-muted-foreground">Add to:</Label>
+            <Select value={quickAddProjectId} onValueChange={setQuickAddProjectId}>
+              <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No project</SelectItem>
+                {projects.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         <Tabs defaultValue="llm">
           <TabsList>
             {categories.map((c) => (
@@ -206,29 +322,9 @@ export default function SubscriptionsPage() {
           {categories.map((c) => (
             <TabsContent key={c} value={c}>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {catalog.filter((item) => item.category === c).map((item) => {
-                  const alreadyAdded = addedNames.has(item.name)
-                  return (
-                    <Card key={item.name} className={alreadyAdded ? "opacity-50" : ""}>
-                      <CardContent className="flex items-center justify-between p-4">
-                        <div>
-                          <div className="font-medium">{item.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {item.provider} &middot; ${item.cost}/{item.billingCycle === "monthly" ? "mo" : "yr"}
-                          </div>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant={alreadyAdded ? "secondary" : "default"}
-                          disabled={alreadyAdded}
-                          onClick={() => handleAddFromCatalog(item)}
-                        >
-                          {alreadyAdded ? "Added" : "Add"}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )
-                })}
+                {catalog.filter((item) => item.category === c).map((item) => (
+                  <CatalogCard key={`${item.name}|${item.provider}`} item={item} onAdd={handleAddFromCatalog} />
+                ))}
               </div>
             </TabsContent>
           ))}
@@ -276,11 +372,24 @@ export default function SubscriptionsPage() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">
-                      <div>${((sub.quantity ?? 1) * sub.cost).toFixed(2)}/{sub.billingCycle === "monthly" ? "mo" : "yr"}</div>
-                      {(sub.quantity ?? 1) > 1 && (
-                        <div className="text-xs text-muted-foreground">
-                          {sub.quantity} &times; ${sub.cost.toFixed(2)}
-                        </div>
+                      {sub.billingCycle === "monthly" ? (
+                        <>
+                          <div>${((sub.quantity ?? 1) * sub.cost).toFixed(2)}/mo</div>
+                          {(sub.quantity ?? 1) > 1 && (
+                            <div className="text-xs text-muted-foreground">
+                              {sub.quantity} &times; ${sub.cost.toFixed(2)}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <div>${sub.cost.toFixed(2)}/yr</div>
+                          {(sub.quantity ?? 1) > 1 && (
+                            <div className="text-xs text-muted-foreground">
+                              {sub.quantity} yr prepaid
+                            </div>
+                          )}
+                        </>
                       )}
                     </TableCell>
                     <TableCell>

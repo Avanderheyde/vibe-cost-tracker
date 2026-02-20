@@ -88,8 +88,9 @@ export class Store {
   }
 
   private toMonthly(cost: number, quantity: number, cycle: BillingCycle): number {
-    const total = cost * quantity
-    return cycle === "yearly" ? total / 12 : total
+    // Monthly: quantity = seats, so cost * seats
+    // Yearly: quantity = years prepaid, doesn't change the monthly rate
+    return cycle === "yearly" ? cost / 12 : cost * quantity
   }
 
   getMonthlyTotal(): number {
