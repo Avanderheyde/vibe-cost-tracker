@@ -406,6 +406,27 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Business", cost: 15, billingCycle: "monthly" },
     ]},
+  { name: "Stripe", provider: "Stripe", category: "saas",
+    description: "Payment processing platform",
+    detail: "Payment infrastructure for the internet. Handles credit cards, subscriptions, invoicing, and payouts. 2.9% + 30c per transaction.",
+    tiers: [
+      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "SendGrid", provider: "Twilio", category: "saas",
+    description: "Transactional and marketing email",
+    detail: "Cloud-based email delivery service for transactional and marketing emails. APIs for sending, tracking, and managing email at scale.",
+    tiers: [
+      { label: "Essentials", cost: 19.95, billingCycle: "monthly" },
+      { label: "Pro", cost: 89.95, billingCycle: "monthly" },
+    ]},
+  { name: "Mailchimp", provider: "Intuit", category: "saas",
+    description: "Email marketing and automation",
+    detail: "Email marketing platform with audience management, campaign builder, automations, and analytics. Popular for newsletters and drip campaigns.",
+    tiers: [
+      { label: "Essentials", cost: 13, billingCycle: "monthly" },
+      { label: "Standard", cost: 20, billingCycle: "monthly" },
+      { label: "Premium", cost: 350, billingCycle: "monthly" },
+    ]},
 
   // Monitoring
   { name: "Sentry", provider: "Sentry", category: "monitoring",
