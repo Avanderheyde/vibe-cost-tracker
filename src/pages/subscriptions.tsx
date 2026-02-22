@@ -24,6 +24,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   DropdownMenu,
@@ -31,7 +37,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Plus, MoreHorizontal, Pencil, Trash2, Power, PowerOff } from "lucide-react"
+import { Plus, MoreHorizontal, Pencil, Trash2, Power, PowerOff, BookOpen } from "lucide-react"
 
 function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: CatalogItem, tier: CatalogTier) => void }) {
   const [selectedIdx, setSelectedIdx] = useState(0)
@@ -84,6 +90,7 @@ const categories: Category[] = ["llm", "hosting", "tools", "monitoring", "saas",
 export default function SubscriptionsPage() {
   const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [catalogOpen, setCatalogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [quickAddProjectId, setQuickAddProjectId] = useState<string>("none")
 
@@ -129,6 +136,7 @@ export default function SubscriptionsPage() {
   }
 
   const handleAddFromCatalog = (item: CatalogItem, tier: CatalogTier) => {
+    setCatalogOpen(false)
     setEditingId(null)
     setCost(tier.cost.toString())
     setQuantity("1")
@@ -174,10 +182,14 @@ export default function SubscriptionsPage() {
           <h1 className="text-2xl font-bold">Subscriptions</h1>
           <p className="text-muted-foreground">Manage your vibe coding subscriptions</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm() }}>
-          <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" /> Add Custom</Button>
-          </DialogTrigger>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => setCatalogOpen(true)}>
+            <BookOpen className="mr-2 h-4 w-4" /> Browse Catalog
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm() }}>
+            <DialogTrigger asChild>
+              <Button><Plus className="mr-2 h-4 w-4" /> Add Custom</Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{editingId ? "Edit Subscription" : "Add Subscription"}</DialogTitle>
@@ -295,12 +307,15 @@ export default function SubscriptionsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Quick Add from Catalog</h2>
-          <div className="flex items-center gap-2">
+      <Sheet open={catalogOpen} onOpenChange={setCatalogOpen}>
+        <SheetContent side="right" className="w-[400px] sm:w-[540px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Quick Add from Catalog</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 flex items-center gap-2">
             <Label className="text-sm text-muted-foreground">Add to:</Label>
             <Select value={quickAddProjectId} onValueChange={setQuickAddProjectId}>
               <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
@@ -312,24 +327,24 @@ export default function SubscriptionsPage() {
               </SelectContent>
             </Select>
           </div>
-        </div>
-        <Tabs defaultValue="llm">
-          <TabsList>
+          <Tabs defaultValue="llm" className="mt-4">
+            <TabsList>
+              {categories.map((c) => (
+                <TabsTrigger key={c} value={c}>{categoryLabels[c]}</TabsTrigger>
+              ))}
+            </TabsList>
             {categories.map((c) => (
-              <TabsTrigger key={c} value={c}>{categoryLabels[c]}</TabsTrigger>
+              <TabsContent key={c} value={c}>
+                <div className="grid gap-2">
+                  {catalog.filter((item) => item.category === c).map((item) => (
+                    <CatalogCard key={`${item.name}|${item.provider}`} item={item} onAdd={handleAddFromCatalog} />
+                  ))}
+                </div>
+              </TabsContent>
             ))}
-          </TabsList>
-          {categories.map((c) => (
-            <TabsContent key={c} value={c}>
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {catalog.filter((item) => item.category === c).map((item) => (
-                  <CatalogCard key={`${item.name}|${item.provider}`} item={item} onAdd={handleAddFromCatalog} />
-                ))}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
+          </Tabs>
+        </SheetContent>
+      </Sheet>
 
       <div>
         <h2 className="mb-4 text-lg font-semibold">Your Subscriptions</h2>
@@ -347,6 +362,7 @@ export default function SubscriptionsPage() {
                 <TableHead>Category</TableHead>
                 <TableHead>Project</TableHead>
                 <TableHead>Cost</TableHead>
+                <TableHead>Next Payment</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
@@ -391,6 +407,9 @@ export default function SubscriptionsPage() {
                           )}
                         </>
                       )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {sub.nextPaymentDate ? new Date(sub.nextPaymentDate + "T00:00:00").toLocaleDateString() : "\u2014"}
                     </TableCell>
                     <TableCell>
                       <Badge variant={sub.isActive ? "default" : "secondary"}>
