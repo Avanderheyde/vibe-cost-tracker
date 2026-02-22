@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react"
 import { useStore } from "@/lib/store-context"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
   Dialog,
   DialogContent,
@@ -9,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
+import { Area, AreaChart, Pie, PieChart, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import type { Subscription } from "@/lib/types"
 
 const categoryLabels: Record<string, string> = {
@@ -19,6 +19,14 @@ const categoryLabels: Record<string, string> = {
   saas: "SaaS",
   other: "Other",
 }
+
+const CHART_COLORS = [
+  "oklch(0.585 0.233 277)",
+  "oklch(0.65 0.18 220)",
+  "oklch(0.65 0.18 155)",
+  "oklch(0.75 0.15 85)",
+  "oklch(0.65 0.22 15)",
+]
 
 function toMonthly(sub: Subscription): number {
   return sub.billingCycle === "yearly" ? sub.cost / 12 : sub.cost * (sub.quantity ?? 1)
@@ -49,7 +57,7 @@ function BreakdownList({ subs }: { subs: Subscription[] }) {
 }
 
 export default function DashboardPage() {
-  const { projects, subscriptions, getMonthlyTotal, getMonthlyTotalByProject, getTotalsByCategory } = useStore()
+  const { subscriptions, getMonthlyTotal, getTotalsByCategory } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogSubs, setDialogSubs] = useState<Subscription[]>([])
@@ -62,6 +70,33 @@ export default function DashboardPage() {
   const yearlyTotal = monthlyTotal * 12
   const byCategory = getTotalsByCategory()
   const activeCount = subscriptions.filter((s) => s.isActive).length
+
+  const areaData = useMemo(() => {
+    const now = new Date()
+    return Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() + i, 1)
+      return {
+        month: d.toLocaleDateString("default", { month: "short" }),
+        total: monthlyTotal,
+      }
+    })
+  }, [monthlyTotal])
+
+  const pieData = useMemo(() => {
+    return Object.entries(byCategory).map(([category, total]) => ({
+      name: categoryLabels[category] || category,
+      category,
+      value: Math.round(total * 100) / 100,
+    }))
+  }, [byCategory])
+
+  const openCategory = (category: string, total: number) => {
+    const subs = subscriptions.filter((s) => s.isActive && s.category === category)
+    setDialogTitle(categoryLabels[category] || category)
+    setDialogSubs(subs)
+    setDialogTotal(total)
+    setDialogOpen(true)
+  }
 
   const subsWithDates = subscriptions.filter((s) => s.isActive && s.nextPaymentDate)
 
@@ -102,24 +137,8 @@ export default function DashboardPage() {
     })
   }, [selectedDate, subsWithDates, paymentDays])
 
-  const openCategory = (category: string, total: number) => {
-    const subs = subscriptions.filter((s) => s.isActive && s.category === category)
-    setDialogTitle(categoryLabels[category] || category)
-    setDialogSubs(subs)
-    setDialogTotal(total)
-    setDialogOpen(true)
-  }
-
-  const openProject = (projectId: string, projectName: string, total: number) => {
-    const subs = subscriptions.filter((s) => s.isActive && s.projectId === projectId)
-    setDialogTitle(projectName)
-    setDialogSubs(subs)
-    setDialogTotal(total)
-    setDialogOpen(true)
-  }
-
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">Your vibe coding cost overview</p>
@@ -131,7 +150,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Total</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">${monthlyTotal.toFixed(2)}</div>
+            <div className="text-3xl font-bold text-primary">${monthlyTotal.toFixed(2)}</div>
           </CardContent>
         </Card>
         <Card>
@@ -151,6 +170,79 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {activeCount > 0 && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Projection</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={areaData}>
+                  <defs>
+                    <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.2} />
+                      <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+                  <Tooltip formatter={(value: number) => [`$${value.toFixed(2)}`, "Total"]} />
+                  <Area type="monotone" dataKey="total" stroke="var(--color-primary)" fill="url(#fillTotal)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">By Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4">
+                <ResponsiveContainer width={180} height={180}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      strokeWidth={2}
+                      stroke="var(--color-background)"
+                      onClick={(_, idx) => {
+                        const entry = pieData[idx]
+                        openCategory(entry.category, entry.value)
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {pieData.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value: number) => `$${value.toFixed(2)}/mo`} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex flex-col gap-2">
+                  {pieData.map((entry, i) => (
+                    <button
+                      key={entry.category}
+                      className="flex items-center gap-2 text-left text-sm hover:underline"
+                      onClick={() => openCategory(entry.category, entry.value)}
+                    >
+                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                      <span>{entry.name}</span>
+                      <span className="text-muted-foreground">${entry.value.toFixed(2)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {subsWithDates.length > 0 && (
         <div>
@@ -198,58 +290,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-
-      <div>
-        <h2 className="mb-4 text-lg font-semibold">By Category</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Object.entries(byCategory).map(([category, total]) => (
-            <Card key={category} className="cursor-pointer transition-colors hover:bg-muted/50" onClick={() => openCategory(category, total)}>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {categoryLabels[category] || category}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">${total.toFixed(2)}/mo</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h2 className="mb-4 text-lg font-semibold">By Project</h2>
-        {projects.length === 0 ? (
-          <p className="text-muted-foreground">No projects yet. Add one from the Projects page.</p>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project) => {
-              const projectTotal = getMonthlyTotalByProject(project.id)
-              const projectSubs = subscriptions.filter((s) => s.projectId === project.id && s.isActive)
-              return (
-                <Card key={project.id} className="cursor-pointer transition-colors hover:bg-muted/50" onClick={() => openProject(project.id, project.name, projectTotal)}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: project.color }} />
-                      <CardTitle className="text-sm font-medium">{project.name}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">${projectTotal.toFixed(2)}/mo</div>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {projectSubs.map((sub) => (
-                        <Badge key={sub.id} variant="secondary" className="text-xs">
-                          {sub.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        )}
-      </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
