@@ -3,3 +3,8 @@ services:
     build: .
     ports:
       - "${SELFSTACK_HOST_PORT:-3000}:80"
+    volumes:
+      - vibe-costs-data:/data
+
+volumes:
+  vibe-costs-data:

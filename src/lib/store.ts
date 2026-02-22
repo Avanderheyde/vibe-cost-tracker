@@ -1,31 +1,63 @@
 import type { Project, Subscription, StoreData, BillingCycle } from "./types"
 
 const STORAGE_KEY = "vibe-costs-data"
+const EMPTY: StoreData = { projects: [], subscriptions: [] }
 
 type ProjectInput = Omit<Project, "id">
 type SubscriptionInput = Omit<Subscription, "id">
 
 export class Store {
-  private data: StoreData
+  private data: StoreData = { projects: [], subscriptions: [] }
+  private useApi = false
 
-  constructor() {
-    this.data = this.load()
+  async init(): Promise<void> {
+    try {
+      const res = await fetch("/api/data")
+      if (!res.ok) throw new Error("api unavailable")
+      const apiData: StoreData = await res.json()
+      this.useApi = true
+
+      // Migrate: if API is empty but localStorage has data, push it up
+      const hasApiData = apiData.projects.length > 0 || apiData.subscriptions.length > 0
+      if (!hasApiData) {
+        const local = this.loadLocal()
+        const hasLocal = local.projects.length > 0 || local.subscriptions.length > 0
+        if (hasLocal) {
+          this.data = local
+          this.save()
+          localStorage.removeItem(STORAGE_KEY)
+          return
+        }
+      }
+
+      this.data = apiData
+    } catch {
+      // API unavailable — fall back to localStorage (e.g. npm run dev without server)
+      this.data = this.loadLocal()
+    }
   }
 
-  private load(): StoreData {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      try {
-        return JSON.parse(raw)
-      } catch {
-        return { projects: [], subscriptions: [] }
-      }
+  private loadLocal(): StoreData {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      return raw ? JSON.parse(raw) : { ...EMPTY, projects: [], subscriptions: [] }
+    } catch {
+      return { projects: [], subscriptions: [] }
     }
-    return { projects: [], subscriptions: [] }
   }
 
   private save(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data))
+    if (this.useApi) {
+      fetch("/api/data", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.data),
+      }).catch(() => {
+        // Silently fall back — data is still in memory
+      })
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data))
+    }
   }
 
   private generateId(): string {
@@ -126,6 +158,9 @@ export class Store {
 
   resetData(): void {
     this.data = { projects: [], subscriptions: [] }
+    if (this.useApi) {
+      fetch("/api/data/reset", { method: "POST" }).catch(() => {})
+    }
     this.save()
   }
 }

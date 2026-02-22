@@ -1,11 +1,22 @@
 import { Store } from "./store"
 
+// Mock fetch so the Store falls back to localStorage in tests
+const fetchMock = vi.fn(() => Promise.reject(new Error("no server")))
+vi.stubGlobal("fetch", fetchMock)
+
+async function createStore(): Promise<Store> {
+  const store = new Store()
+  await store.init()
+  return store
+}
+
 describe("Store", () => {
   let store: Store
 
-  beforeEach(() => {
+  beforeEach(async () => {
     localStorage.clear()
-    store = new Store()
+    fetchMock.mockRejectedValue(new Error("no server"))
+    store = await createStore()
   })
 
   describe("projects", () => {
@@ -37,9 +48,9 @@ describe("Store", () => {
       expect(store.getSubscriptions()[0].projectId).toBeNull()
     })
 
-    it("persists across instances", () => {
+    it("persists across instances via localStorage fallback", async () => {
       store.addProject({ name: "Persisted", description: "", color: "#000" })
-      const store2 = new Store()
+      const store2 = await createStore()
       expect(store2.getProjects()).toHaveLength(1)
       expect(store2.getProjects()[0].name).toBe("Persisted")
     })
@@ -161,7 +172,7 @@ describe("Store", () => {
   })
 
   describe("nextPaymentDate", () => {
-    it("round-trips through add, update, and export/import", () => {
+    it("round-trips through add, update, and export/import", async () => {
       const sub = store.addSubscription({
         name: "Claude Pro", provider: "Anthropic", cost: 20,
         billingCycle: "monthly", category: "llm", projectId: null, isActive: true, quantity: 1, nextPaymentDate: "2025-03-15",
@@ -173,7 +184,7 @@ describe("Store", () => {
 
       const json = store.exportData()
       localStorage.clear()
-      const store2 = new Store()
+      const store2 = await createStore()
       store2.importData(json)
       expect(store2.getSubscriptions()[0].nextPaymentDate).toBe("2025-04-15")
     })
@@ -188,7 +199,7 @@ describe("Store", () => {
   })
 
   describe("export/import", () => {
-    it("exports and imports data", () => {
+    it("exports and imports data", async () => {
       store.addProject({ name: "Exported", description: "test", color: "#fff" })
       store.addSubscription({
         name: "Sub", provider: "P", cost: 15,
@@ -196,7 +207,7 @@ describe("Store", () => {
       })
       const json = store.exportData()
       localStorage.clear()
-      const store2 = new Store()
+      const store2 = await createStore()
       expect(store2.getProjects()).toHaveLength(0)
       store2.importData(json)
       expect(store2.getProjects()).toHaveLength(1)

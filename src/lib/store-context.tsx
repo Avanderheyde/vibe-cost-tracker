@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
 import { Store } from "./store"
 import type { Project, Subscription } from "./types"
 
@@ -28,8 +28,15 @@ const StoreContext = createContext<StoreContextValue | null>(null)
 const store = new Store()
 
 export function StoreProvider({ children }: { children: ReactNode }) {
+  const [ready, setReady] = useState(false)
   const [, setVersion] = useState(0)
   const bump = useCallback(() => setVersion((v) => v + 1), [])
+
+  useEffect(() => {
+    store.init().then(() => setReady(true))
+  }, [])
+
+  if (!ready) return null
 
   const value: StoreContextValue = {
     projects: store.getProjects(),
