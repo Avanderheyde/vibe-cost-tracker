@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useStore } from "@/lib/store-context"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -110,6 +110,19 @@ export default function ProjectsPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {projects.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Monthly Cost</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">
+              ${projects.reduce((sum, p) => sum + getMonthlyTotalByProject(p.id), 0).toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {projects.length === 0 ? (
         <Card>

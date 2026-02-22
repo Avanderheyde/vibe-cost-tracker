@@ -3,10 +3,12 @@ import { useStore } from "@/lib/store-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Download, Upload, Trash2 } from "lucide-react"
+import { Download, Upload, Trash2, Sun, Moon, Monitor } from "lucide-react"
+import { useTheme } from "@/components/theme-provider"
 
 export default function SettingsPage() {
   const { exportData, importData, resetData, projects, subscriptions } = useStore()
+  const { theme, setTheme } = useTheme()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importStatus, setImportStatus] = useState<string | null>(null)
 
@@ -50,6 +52,26 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">Export, import, or reset your data</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Theme</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-2">
+            {([["light", Sun, "Light"], ["dark", Moon, "Dark"], ["system", Monitor, "System"]] as const).map(([value, Icon, label]) => (
+              <Button
+                key={value}
+                variant={theme === value ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTheme(value)}
+              >
+                <Icon className="mr-2 h-4 w-4" /> {label}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
