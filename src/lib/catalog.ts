@@ -92,6 +92,13 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Pro", cost: 15, billingCycle: "monthly" },
     ]},
+  { name: "GitHub", provider: "GitHub", category: "tools",
+    description: "Code hosting and version control",
+    detail: "The largest code hosting platform with Git repositories, pull requests, issues, Actions CI/CD, and package registry.",
+    tiers: [
+      { label: "Pro", cost: 4, billingCycle: "monthly" },
+      { label: "Team", cost: 4, billingCycle: "monthly" },
+    ]},
   { name: "GitHub Copilot", provider: "GitHub", category: "tools",
     description: "AI pair programmer in your editor",
     detail: "GitHub's AI coding assistant that provides inline suggestions, chat, and code explanations. Integrates with VS Code, JetBrains, and Neovim.",
@@ -190,25 +197,25 @@ export const catalog: CatalogItem[] = [
     description: "Amazon's cloud computing platform",
     detail: "The largest cloud provider with 200+ services including EC2, S3, Lambda, and RDS. Pay-as-you-go pricing with a broad free tier.",
     tiers: [
-      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
   { name: "Azure", provider: "Microsoft", category: "hosting",
     description: "Microsoft's cloud platform",
     detail: "Enterprise cloud with strong .NET, Windows, and Active Directory integration. Offers VMs, App Service, Functions, and managed databases.",
     tiers: [
-      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
   { name: "Google Cloud", provider: "Google", category: "hosting",
     description: "Google's cloud infrastructure",
     detail: "Cloud platform known for BigQuery, GKE, and AI/ML services. Strong in data analytics, Kubernetes, and global networking.",
     tiers: [
-      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
   { name: "Firebase", provider: "Google", category: "hosting",
     description: "Google's app development platform",
     detail: "Backend-as-a-service with real-time database, authentication, hosting, cloud functions, and analytics. Popular for mobile and web apps.",
     tiers: [
-      { label: "Blaze (pay-as-you-go)", cost: 0, billingCycle: "monthly" },
+      { label: "Blaze (by usage)", cost: 0, billingCycle: "monthly" },
     ]},
   { name: "Supabase", provider: "Supabase", category: "hosting",
     description: "Open-source Firebase alternative",
@@ -287,6 +294,27 @@ export const catalog: CatalogItem[] = [
     detail: "Developer-friendly serverless platform for deploying apps, APIs, and AI workloads globally with automatic scaling and native GPU support.",
     tiers: [
       { label: "Pro", cost: 29, billingCycle: "monthly" },
+    ]},
+  { name: "Convex", provider: "Convex", category: "hosting",
+    description: "Real-time backend platform",
+    detail: "TypeScript-native backend with real-time sync, built-in auth, and database. Eliminates cache invalidation with end-to-end reactivity.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Professional", cost: 25, billingCycle: "monthly" },
+    ]},
+  { name: "Upstash", provider: "Upstash", category: "hosting",
+    description: "Serverless Redis and Kafka",
+    detail: "Serverless Redis and Kafka with per-request pricing. Ideal for caching, rate limiting, and messaging in serverless architectures.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Pro 2K", cost: 280, billingCycle: "monthly" },
+    ]},
+  { name: "Pinecone", provider: "Pinecone", category: "hosting",
+    description: "Managed vector database",
+    detail: "Serverless vector database for AI applications. Store and query embeddings for semantic search, RAG, and recommendation systems.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Standard", cost: 70, billingCycle: "monthly" },
     ]},
 
   // SaaS & Creative Tools
@@ -410,7 +438,21 @@ export const catalog: CatalogItem[] = [
     description: "Payment processing platform",
     detail: "Payment infrastructure for the internet. Handles credit cards, subscriptions, invoicing, and payouts. 2.9% + 30c per transaction.",
     tiers: [
-      { label: "Usage-based", cost: 0, billingCycle: "monthly" },
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Resend", provider: "Resend", category: "saas",
+    description: "Developer-first email API",
+    detail: "Modern email API built for developers with React Email support. Simple SDK for transactional emails with high deliverability.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+    ]},
+  { name: "Clerk", provider: "Clerk", category: "saas",
+    description: "Drop-in authentication and user management",
+    detail: "Complete auth solution with pre-built UI components, social login, MFA, and user management dashboard. SDKs for React, Next.js, and more.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Pro", cost: 25, billingCycle: "monthly" },
     ]},
   { name: "SendGrid", provider: "Twilio", category: "saas",
     description: "Transactional and marketing email",
@@ -429,6 +471,12 @@ export const catalog: CatalogItem[] = [
     ]},
 
   // Monitoring
+  { name: "PostHog", provider: "PostHog", category: "monitoring",
+    description: "Product analytics and session replay",
+    detail: "Open-source product analytics with event tracking, session replay, feature flags, A/B testing, and surveys. Self-hostable or cloud.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
   { name: "Sentry", provider: "Sentry", category: "monitoring",
     description: "Application error tracking",
     detail: "Error monitoring and performance tracking for web and mobile apps. Captures stack traces, breadcrumbs, and release health data.",
@@ -497,6 +545,12 @@ export const catalog: CatalogItem[] = [
     ]},
 
   // Other (Domains, Utilities, etc.)
+  { name: "Namecheap", provider: "Namecheap", category: "other",
+    description: "Domain registrar and web hosting",
+    detail: "Popular domain registrar with competitive pricing, free WhoisGuard privacy, and optional shared/VPS hosting.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "yearly" },
+    ]},
   { name: "Domain", provider: "", category: "other",
     description: "Domain name registration",
     detail: "Register a domain name. Set the TLD in the name (e.g. \"Domain (.com)\"), your registrar as the provider, and the actual renewal cost.",
@@ -552,6 +606,11 @@ export const catalog: CatalogItem[] = [
 
 export const domainTLDs = [".com", ".dev", ".io", ".ai", ".app", ".co", ".xyz", ".sh", ".tech", ".cloud"]
 export const domainRegistrars = ["Cloudflare", "Namecheap", "Porkbun"]
+
+export function formatTierCost(tier: CatalogTier): string {
+  if (tier.cost === 0) return "by usage"
+  return `$${tier.cost}/${tier.billingCycle === "monthly" ? "mo" : "yr"}`
+}
 
 export function getCatalogByCategory(category: Category): CatalogItem[] {
   return catalog.filter((item) => item.category === category)

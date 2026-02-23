@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useStore } from "@/lib/store-context"
-import { catalog, tierDisplayName, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
+import { catalog, tierDisplayName, formatTierCost, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
 import type { Category, BillingCycle } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -51,7 +51,7 @@ function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: Catalog
           <div className="font-medium">{item.name}</div>
           <div className="text-xs text-muted-foreground">{item.description}</div>
           <div className="text-sm text-muted-foreground">
-            {item.provider ? `${item.provider} \u00b7 ` : ""}${tier.cost}/{tier.billingCycle === "monthly" ? "mo" : "yr"}
+            {item.provider ? `${item.provider} \u00b7 ` : ""}{formatTierCost(tier)}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: Catalog
               <SelectContent>
                 {item.tiers.map((t, i) => (
                   <SelectItem key={i} value={i.toString()}>
-                    {t.label || item.name} — ${t.cost}/{t.billingCycle === "monthly" ? "mo" : "yr"}
+                    {t.label || item.name} — {formatTierCost(t)}
                   </SelectItem>
                 ))}
               </SelectContent>
