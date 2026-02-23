@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useStore } from "@/lib/store-context"
-import { catalog, tierDisplayName, formatTierCost, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
+import { catalog, categories, categoryLabels, tierDisplayName, formatTierCost, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
 import type { Category, BillingCycle } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -76,16 +76,6 @@ function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: Catalog
   )
 }
 
-const categoryLabels: Record<string, string> = {
-  llm: "LLM",
-  hosting: "Hosting",
-  tools: "Tools",
-  monitoring: "Monitoring",
-  saas: "SaaS",
-  other: "Other",
-}
-
-const categories: Category[] = ["llm", "hosting", "tools", "monitoring", "saas", "other"]
 
 export default function SubscriptionsPage() {
   const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription } = useStore()
@@ -99,7 +89,7 @@ export default function SubscriptionsPage() {
   const [cost, setCost] = useState("")
   const [quantity, setQuantity] = useState("1")
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly")
-  const [category, setCategory] = useState<Category>("other")
+  const [category, setCategory] = useState<Category>("ai-models")
   const [projectId, setProjectId] = useState<string>("none")
   const [catalogDetail, setCatalogDetail] = useState("")
   const [isDomainAdd, setIsDomainAdd] = useState(false)
@@ -109,7 +99,7 @@ export default function SubscriptionsPage() {
 
   const resetForm = () => {
     setName(""); setProvider(""); setCost(""); setQuantity("1"); setBillingCycle("monthly")
-    setCategory("other"); setProjectId("none"); setEditingId(null); setCatalogDetail("")
+    setCategory("ai-models"); setProjectId("none"); setEditingId(null); setCatalogDetail("")
     setIsDomainAdd(false); setDomainTLD(".com"); setDomainRegistrar("Cloudflare"); setNextPaymentDate("")
   }
 
@@ -327,7 +317,7 @@ export default function SubscriptionsPage() {
               </SelectContent>
             </Select>
           </div>
-          <Tabs defaultValue="llm" className="mt-4">
+          <Tabs defaultValue="ai-models" className="mt-4">
             <TabsList>
               {categories.map((c) => (
                 <TabsTrigger key={c} value={c}>{categoryLabels[c]}</TabsTrigger>

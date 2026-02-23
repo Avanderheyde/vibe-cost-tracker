@@ -1,5 +1,19 @@
 export type BillingCycle = "monthly" | "yearly"
-export type Category = "llm" | "hosting" | "tools" | "monitoring" | "saas" | "other"
+export type Category =
+  | "ai-models"
+  | "ai-coding"
+  | "ai-media"
+  | "database"
+  | "cloud"
+  | "hosting"
+  | "services"
+  | "marketing"
+  | "monitoring"
+  | "design"
+  | "productivity"
+  | "dev-tools"
+  | "domains"
+  | "security"
 
 export interface Project {
   id: string

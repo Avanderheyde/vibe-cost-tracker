@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
 import { useStore } from "@/lib/store-context"
+import { categoryLabels } from "@/lib/catalog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
@@ -11,14 +12,6 @@ import { Calendar } from "@/components/ui/calendar"
 import { Area, AreaChart, Pie, PieChart, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import type { Subscription } from "@/lib/types"
 
-const categoryLabels: Record<string, string> = {
-  llm: "LLM",
-  hosting: "Hosting",
-  tools: "Tools",
-  monitoring: "Monitoring",
-  saas: "SaaS",
-  other: "Other",
-}
 
 const CHART_COLORS = [
   "oklch(0.585 0.233 277)",

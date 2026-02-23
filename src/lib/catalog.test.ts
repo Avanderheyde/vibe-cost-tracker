@@ -21,9 +21,9 @@ describe("catalog", () => {
   })
 
   it("filters by category", () => {
-    const llm = getCatalogByCategory("llm")
-    expect(llm.length).toBeGreaterThan(0)
-    expect(llm.every((item) => item.category === "llm")).toBe(true)
+    const aiModels = getCatalogByCategory("ai-models")
+    expect(aiModels.length).toBeGreaterThan(0)
+    expect(aiModels.every((item) => item.category === "ai-models")).toBe(true)
   })
 
   it("builds display name from item and tier", () => {
