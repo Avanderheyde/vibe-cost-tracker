@@ -3,7 +3,8 @@ import { useStore } from "@/lib/store-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Download, Upload, Trash2, Sun, Moon, Monitor } from "lucide-react"
+import { Download, Upload, Trash2, Sun, Moon, Monitor, FileSpreadsheet } from "lucide-react"
+import { categoryLabels } from "@/lib/catalog"
 import { useTheme } from "@/components/theme-provider"
 
 export default function SettingsPage() {
@@ -19,6 +20,33 @@ export default function SettingsPage() {
     const a = document.createElement("a")
     a.href = url
     a.download = `vibe-costs-${new Date().toISOString().split("T")[0]}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleExportCsv = () => {
+    const csvQuote = (s: string) => `"${s.replace(/"/g, '""')}"`
+    const header = ["Name", "Provider", "Cost", "Quantity", "Billing Cycle", "Category", "Project", "Next Payment", "Status"]
+    const rows = subscriptions.map((sub) => {
+      const project = projects.find((p) => p.id === sub.projectId)
+      return [
+        sub.name,
+        sub.provider,
+        sub.cost.toFixed(2),
+        String(sub.quantity ?? 1),
+        sub.billingCycle,
+        categoryLabels[sub.category] || sub.category,
+        project?.name || "",
+        sub.nextPaymentDate || "",
+        sub.isActive ? "Active" : "Inactive",
+      ].map(csvQuote).join(",")
+    })
+    const csv = [header.map(csvQuote).join(","), ...rows].join("\r\n")
+    const blob = new Blob([csv], { type: "text/csv" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `vibe-costs-${new Date().toISOString().split("T")[0]}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -81,9 +109,14 @@ export default function SettingsPage() {
           <p className="text-sm text-muted-foreground">
             Download your data as a JSON file. Currently tracking {projects.length} project(s) and {subscriptions.length} subscription(s).
           </p>
-          <Button onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" /> Export JSON
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleExport}>
+              <Download className="mr-2 h-4 w-4" /> Export JSON
+            </Button>
+            <Button variant="outline" onClick={handleExportCsv}>
+              <FileSpreadsheet className="mr-2 h-4 w-4" /> Export CSV
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

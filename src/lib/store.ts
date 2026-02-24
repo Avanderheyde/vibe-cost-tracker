@@ -1,6 +1,14 @@
-import type { Project, Subscription, StoreData, BillingCycle } from "./types"
+import type { Project, Subscription, StoreData, BillingCycle, Category } from "./types"
 
 const STORAGE_KEY = "vibe-costs-data"
+
+// Map old category keys to new ones (from the v0.1 → v0.2 restructure)
+const CATEGORY_MIGRATION: Record<string, Category> = {
+  "llm": "ai-models",
+  "saas": "productivity",
+  "tools": "dev-tools",
+  "other": "services",
+}
 const EMPTY: StoreData = { projects: [], subscriptions: [] }
 
 type ProjectInput = Omit<Project, "id">
@@ -35,6 +43,19 @@ export class Store {
       // API unavailable — fall back to localStorage (e.g. npm run dev without server)
       this.data = this.loadLocal()
     }
+    this.migrateCategories()
+  }
+
+  private migrateCategories(): void {
+    let changed = false
+    for (const sub of this.data.subscriptions) {
+      const mapped = CATEGORY_MIGRATION[sub.category]
+      if (mapped) {
+        sub.category = mapped
+        changed = true
+      }
+    }
+    if (changed) this.save()
   }
 
   private loadLocal(): StoreData {
@@ -88,6 +109,9 @@ export class Store {
     this.data.subscriptions = this.data.subscriptions.map((s) =>
       s.projectId === id ? { ...s, projectId: null } : s
     )
+    if (this.data.budgets?.byProject?.[id] !== undefined) {
+      delete this.data.budgets.byProject[id]
+    }
     this.save()
   }
 
@@ -144,6 +168,31 @@ export class Store {
       totals[sub.category] = (totals[sub.category] || 0) + monthly
     }
     return totals
+  }
+
+  getMonthlyBudget(): number | null {
+    return this.data.budgets?.monthly ?? null
+  }
+
+  setMonthlyBudget(amount: number | null): void {
+    if (!this.data.budgets) this.data.budgets = {}
+    this.data.budgets.monthly = amount
+    this.save()
+  }
+
+  getProjectBudget(projectId: string): number | null {
+    return this.data.budgets?.byProject?.[projectId] ?? null
+  }
+
+  setProjectBudget(projectId: string, amount: number | null): void {
+    if (!this.data.budgets) this.data.budgets = {}
+    if (!this.data.budgets.byProject) this.data.budgets.byProject = {}
+    if (amount === null) {
+      delete this.data.budgets.byProject[projectId]
+    } else {
+      this.data.budgets.byProject[projectId] = amount
+    }
+    this.save()
   }
 
   exportData(): string {

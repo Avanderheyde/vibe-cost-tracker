@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useStore } from "@/lib/store-context"
 import { catalog, categories, categoryLabels, tierDisplayName, formatTierCost, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
 import type { Category, BillingCycle } from "@/lib/types"
@@ -23,13 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   DropdownMenu,
@@ -83,6 +76,7 @@ export default function SubscriptionsPage() {
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [quickAddProjectId, setQuickAddProjectId] = useState<string>("none")
+  const [catalogCategory, setCatalogCategory] = useState<Category>("ai-models")
 
   const [name, setName] = useState("")
   const [provider, setProvider] = useState("")
@@ -96,6 +90,30 @@ export default function SubscriptionsPage() {
   const [domainTLD, setDomainTLD] = useState(".com")
   const [domainRegistrar, setDomainRegistrar] = useState("Cloudflare")
   const [nextPaymentDate, setNextPaymentDate] = useState("")
+
+  const [searchText, setSearchText] = useState("")
+  const [filterCategory, setFilterCategory] = useState("all")
+  const [filterProject, setFilterProject] = useState("all")
+  const [filterStatus, setFilterStatus] = useState("all")
+
+  const filteredSubscriptions = useMemo(() => {
+    return subscriptions.filter((sub) => {
+      if (searchText) {
+        const q = searchText.toLowerCase()
+        if (!sub.name.toLowerCase().includes(q) && !sub.provider.toLowerCase().includes(q)) return false
+      }
+      if (filterCategory !== "all" && sub.category !== filterCategory) return false
+      if (filterProject !== "all") {
+        if (filterProject === "none" && sub.projectId !== null) return false
+        if (filterProject !== "none" && sub.projectId !== filterProject) return false
+      }
+      if (filterStatus !== "all") {
+        if (filterStatus === "active" && !sub.isActive) return false
+        if (filterStatus === "inactive" && sub.isActive) return false
+      }
+      return true
+    })
+  }, [subscriptions, searchText, filterCategory, filterProject, filterStatus])
 
   const resetForm = () => {
     setName(""); setProvider(""); setCost(""); setQuantity("1"); setBillingCycle("monthly")
@@ -300,41 +318,78 @@ export default function SubscriptionsPage() {
         </div>
       </div>
 
-      <Sheet open={catalogOpen} onOpenChange={setCatalogOpen}>
-        <SheetContent side="right" className="w-[400px] sm:w-[540px] overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Quick Add from Catalog</SheetTitle>
-          </SheetHeader>
-          <div className="mt-4 flex items-center gap-2">
-            <Label className="text-sm text-muted-foreground">Add to:</Label>
-            <Select value={quickAddProjectId} onValueChange={setQuickAddProjectId}>
-              <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">No project</SelectItem>
-                {projects.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <Tabs defaultValue="ai-models" className="mt-4">
-            <TabsList>
-              {categories.map((c) => (
-                <TabsTrigger key={c} value={c}>{categoryLabels[c]}</TabsTrigger>
-              ))}
-            </TabsList>
-            {categories.map((c) => (
-              <TabsContent key={c} value={c}>
-                <div className="grid gap-2">
-                  {catalog.filter((item) => item.category === c).map((item) => (
-                    <CatalogCard key={`${item.name}|${item.provider}`} item={item} onAdd={handleAddFromCatalog} />
+      <Dialog open={catalogOpen} onOpenChange={setCatalogOpen}>
+        <DialogContent className="!grid-rows-[auto_1fr] max-w-3xl max-h-[80vh] overflow-hidden p-0">
+          <div className="px-6 pt-6 pb-4 border-b space-y-4">
+            <DialogTitle>Browse Catalog</DialogTitle>
+            <div className="flex items-center gap-4">
+              <Select value={catalogCategory} onValueChange={(v) => setCatalogCategory(v as Category)}>
+                <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {categories.map((c) => (
+                    <SelectItem key={c} value={c}>{categoryLabels[c]}</SelectItem>
                   ))}
-                </div>
-              </TabsContent>
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm text-muted-foreground whitespace-nowrap">Add to:</Label>
+                <Select value={quickAddProjectId} onValueChange={setQuickAddProjectId}>
+                  <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No project</SelectItem>
+                    {projects.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <div className="overflow-y-auto px-6 py-4">
+            <div className="grid gap-2">
+              {catalog.filter((item) => item.category === catalogCategory).map((item) => (
+                <CatalogCard key={`${item.name}|${item.provider}`} item={item} onAdd={handleAddFromCatalog} />
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          placeholder="Search name or provider…"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-48"
+        />
+        <Select value={filterCategory} onValueChange={setFilterCategory}>
+          <SelectTrigger className="w-[160px]"><SelectValue placeholder="Category" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((c) => (
+              <SelectItem key={c} value={c}>{categoryLabels[c]}</SelectItem>
             ))}
-          </Tabs>
-        </SheetContent>
-      </Sheet>
+          </SelectContent>
+        </Select>
+        <Select value={filterProject} onValueChange={setFilterProject}>
+          <SelectTrigger className="w-[160px]"><SelectValue placeholder="Project" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Projects</SelectItem>
+            <SelectItem value="none">No Project</SelectItem>
+            {projects.map((p) => (
+              <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-[130px]"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div>
         <h2 className="mb-4 text-lg font-semibold">Your Subscriptions</h2>
@@ -342,6 +397,12 @@ export default function SubscriptionsPage() {
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
               No subscriptions yet. Add from the catalog above or create a custom one.
+            </CardContent>
+          </Card>
+        ) : filteredSubscriptions.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              No subscriptions match your filters.
             </CardContent>
           </Card>
         ) : (
@@ -358,7 +419,7 @@ export default function SubscriptionsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {subscriptions.map((sub) => {
+              {filteredSubscriptions.map((sub) => {
                 const project = projects.find((p) => p.id === sub.projectId)
                 return (
                   <TableRow key={sub.id} className={!sub.isActive ? "opacity-50" : ""}>
@@ -366,7 +427,7 @@ export default function SubscriptionsPage() {
                       <div className="font-medium">{sub.name}</div>
                       <div className="text-sm text-muted-foreground">{sub.provider}</div>
                     </TableCell>
-                    <TableCell><Badge variant="outline">{categoryLabels[sub.category]}</Badge></TableCell>
+                    <TableCell><Badge variant="outline">{categoryLabels[sub.category] || sub.category}</Badge></TableCell>
                     <TableCell>
                       {project ? (
                         <div className="flex items-center gap-2">

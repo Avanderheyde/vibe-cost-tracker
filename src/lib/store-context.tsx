@@ -18,6 +18,10 @@ interface StoreContextValue {
   getMonthlyTotal: () => number
   getMonthlyTotalByProject: (projectId: string | null) => number
   getTotalsByCategory: () => Record<string, number>
+  getMonthlyBudget: () => number | null
+  setMonthlyBudget: (amount: number | null) => void
+  getProjectBudget: (projectId: string) => number | null
+  setProjectBudget: (projectId: string, amount: number | null) => void
   exportData: () => string
   importData: (json: string) => void
   resetData: () => void
@@ -54,6 +58,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     getMonthlyTotal: () => store.getMonthlyTotal(),
     getMonthlyTotalByProject: (projectId) => store.getMonthlyTotalByProject(projectId),
     getTotalsByCategory: () => store.getTotalsByCategory(),
+
+    getMonthlyBudget: () => store.getMonthlyBudget(),
+    setMonthlyBudget: (amount) => { store.setMonthlyBudget(amount); bump() },
+    getProjectBudget: (projectId) => store.getProjectBudget(projectId),
+    setProjectBudget: (projectId, amount) => { store.setProjectBudget(projectId, amount); bump() },
 
     exportData: () => store.exportData(),
     importData: (json) => { store.importData(json); bump() },

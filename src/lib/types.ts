@@ -38,4 +38,5 @@ export interface Subscription {
 export interface StoreData {
   projects: Project[]
   subscriptions: Subscription[]
+  budgets?: { monthly?: number | null; byProject?: Record<string, number> }
 }

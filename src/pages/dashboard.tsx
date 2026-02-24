@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Calendar } from "@/components/ui/calendar"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Area, AreaChart, Pie, PieChart, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import type { Subscription } from "@/lib/types"
 
@@ -50,11 +52,14 @@ function BreakdownList({ subs }: { subs: Subscription[] }) {
 }
 
 export default function DashboardPage() {
-  const { subscriptions, getMonthlyTotal, getTotalsByCategory } = useStore()
+  const { subscriptions, getMonthlyTotal, getTotalsByCategory, getMonthlyBudget, setMonthlyBudget } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogSubs, setDialogSubs] = useState<Subscription[]>([])
   const [dialogTotal, setDialogTotal] = useState(0)
+
+  const [editingBudget, setEditingBudget] = useState(false)
+  const [budgetInput, setBudgetInput] = useState("")
 
   const [calendarMonth, setCalendarMonth] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
@@ -63,6 +68,19 @@ export default function DashboardPage() {
   const yearlyTotal = monthlyTotal * 12
   const byCategory = getTotalsByCategory()
   const activeCount = subscriptions.filter((s) => s.isActive).length
+
+  const upcomingRenewals = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return subscriptions
+      .filter((s) => s.isActive && s.nextPaymentDate)
+      .map((s) => {
+        const date = new Date(s.nextPaymentDate! + "T00:00:00")
+        return { ...s, parsedDate: date, overdue: date < today }
+      })
+      .sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime())
+      .slice(0, 7)
+  }, [subscriptions])
 
   const areaData = useMemo(() => {
     const now = new Date()
@@ -142,8 +160,74 @@ export default function DashboardPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Total</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-2">
             <div className="text-3xl font-bold text-primary">${monthlyTotal.toFixed(2)}</div>
+            {(() => {
+              const budget = getMonthlyBudget()
+              if (editingBudget) {
+                return (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="Monthly budget"
+                      value={budgetInput}
+                      onChange={(e) => setBudgetInput(e.target.value)}
+                      className="h-8 w-32"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          const val = parseFloat(budgetInput)
+                          setMonthlyBudget(isNaN(val) ? null : val)
+                          setEditingBudget(false)
+                        } else if (e.key === "Escape") {
+                          setEditingBudget(false)
+                        }
+                      }}
+                      autoFocus
+                    />
+                    <Button size="sm" variant="ghost" onClick={() => {
+                      const val = parseFloat(budgetInput)
+                      setMonthlyBudget(isNaN(val) ? null : val)
+                      setEditingBudget(false)
+                    }}>Save</Button>
+                    {budget !== null && (
+                      <Button size="sm" variant="ghost" className="text-destructive" onClick={() => {
+                        setMonthlyBudget(null)
+                        setEditingBudget(false)
+                      }}>Remove</Button>
+                    )}
+                  </div>
+                )
+              }
+              if (budget !== null) {
+                const pct = Math.min((monthlyTotal / budget) * 100, 100)
+                const over = monthlyTotal > budget
+                return (
+                  <button
+                    className="w-full text-left"
+                    onClick={() => { setBudgetInput(budget.toString()); setEditingBudget(true) }}
+                  >
+                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${over ? "bg-destructive" : "bg-green-500"}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className={`mt-1 text-xs ${over ? "text-destructive" : "text-muted-foreground"}`}>
+                      {over ? `$${(monthlyTotal - budget).toFixed(2)} over` : `$${(budget - monthlyTotal).toFixed(2)} remaining of`} ${budget.toFixed(2)} budget
+                    </div>
+                  </button>
+                )
+              }
+              return (
+                <button
+                  className="text-xs text-muted-foreground hover:underline"
+                  onClick={() => { setBudgetInput(""); setEditingBudget(true) }}
+                >
+                  Set budget
+                </button>
+              )
+            })()}
           </CardContent>
         </Card>
         <Card>
@@ -163,6 +247,31 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {upcomingRenewals.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Upcoming Renewals</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {upcomingRenewals.map((r) => (
+              <div
+                key={r.id}
+                className={`flex items-center justify-between rounded-md border p-3 ${r.overdue ? "border-destructive/50 bg-destructive/5" : ""}`}
+              >
+                <div>
+                  <div className="font-medium">{r.name}</div>
+                  <div className="text-sm text-muted-foreground">{r.provider}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm">{r.parsedDate.toLocaleDateString()}</div>
+                  {r.overdue && <div className="text-xs font-medium text-destructive">Overdue</div>}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {activeCount > 0 && (
         <div className="grid gap-4 lg:grid-cols-2">

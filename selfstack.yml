@@ -1,7 +1,7 @@
 name: vibe-costs
 display_name: Vibe Costs
 description: Track and manage your vibe coding subscriptions
-version: 0.1.0
+version: 0.2.0
 
 runtime:
   type: docker-compose

@@ -22,10 +22,64 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Plus, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 
+function ProjectBudgetCell({ projectId, monthlyTotal, getBudget, setBudget }: {
+  projectId: string
+  monthlyTotal: number
+  getBudget: (id: string) => number | null
+  setBudget: (id: string, amount: number | null) => void
+}) {
+  const [editing, setEditing] = useState(false)
+  const [input, setInput] = useState("")
+  const budget = getBudget(projectId)
+
+  if (editing) {
+    return (
+      <Input
+        type="number"
+        step="0.01"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        className="h-8 w-24"
+        autoFocus
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            const val = parseFloat(input)
+            setBudget(projectId, isNaN(val) || input === "" ? null : val)
+            setEditing(false)
+          } else if (e.key === "Escape") {
+            setEditing(false)
+          }
+        }}
+        onBlur={() => {
+          const val = parseFloat(input)
+          setBudget(projectId, isNaN(val) || input === "" ? null : val)
+          setEditing(false)
+        }}
+      />
+    )
+  }
+
+  if (budget !== null) {
+    const over = monthlyTotal > budget
+    return (
+      <button className="text-left" onClick={() => { setInput(budget.toString()); setEditing(true) }}>
+        <span className="font-medium">${budget.toFixed(2)}</span>
+        {over && <span className="ml-1 text-xs text-destructive">Over budget</span>}
+      </button>
+    )
+  }
+
+  return (
+    <button className="text-xs text-muted-foreground hover:underline" onClick={() => { setInput(""); setEditing(true) }}>
+      Set
+    </button>
+  )
+}
+
 const defaultColors = ["#3b82f6", "#ef4444", "#22c55e", "#f59e0b", "#8b5cf6", "#ec4899"]
 
 export default function ProjectsPage() {
-  const { projects, subscriptions, addProject, updateProject, deleteProject, getMonthlyTotalByProject } = useStore()
+  const { projects, subscriptions, addProject, updateProject, deleteProject, getMonthlyTotalByProject, getProjectBudget, setProjectBudget } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [name, setName] = useState("")
@@ -138,6 +192,7 @@ export default function ProjectsPage() {
               <TableHead>Description</TableHead>
               <TableHead>Subscriptions</TableHead>
               <TableHead>Monthly Cost</TableHead>
+              <TableHead>Budget</TableHead>
               <TableHead className="w-12" />
             </TableRow>
           </TableHeader>
@@ -156,6 +211,14 @@ export default function ProjectsPage() {
                   <TableCell className="text-muted-foreground">{project.description || "\u2014"}</TableCell>
                   <TableCell>{subCount}</TableCell>
                   <TableCell className="font-medium">${monthlyTotal.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <ProjectBudgetCell
+                      projectId={project.id}
+                      monthlyTotal={monthlyTotal}
+                      getBudget={getProjectBudget}
+                      setBudget={setProjectBudget}
+                    />
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
