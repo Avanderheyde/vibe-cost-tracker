@@ -277,6 +277,13 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
+  { name: "Temporal", provider: "Temporal", category: "cloud",
+    description: "Durable workflow orchestration platform",
+    detail: "Workflow engine for building reliable distributed applications. Handles retries, state management, and failure recovery so your code runs to completion.",
+    tiers: [
+      { label: "Essentials", cost: 100, billingCycle: "monthly" },
+      { label: "Business", cost: 500, billingCycle: "monthly" },
+    ]},
 
   // Hosting & Deployment
   { name: "Vercel", provider: "Vercel", category: "hosting",
@@ -365,6 +372,13 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Essentials", cost: 19.95, billingCycle: "monthly" },
       { label: "Pro", cost: 89.95, billingCycle: "monthly" },
+    ]},
+  { name: "Browserbase", provider: "Browserbase", category: "services",
+    description: "Serverless browser infrastructure for AI",
+    detail: "Cloud browser platform for AI agents and automation. Spin up headless browsers with captcha solving, proxies, and session replay. Powers web-browsing AI workflows.",
+    tiers: [
+      { label: "Developer", cost: 20, billingCycle: "monthly" },
+      { label: "Startup", cost: 99, billingCycle: "monthly" },
     ]},
 
   // Marketing
@@ -540,6 +554,13 @@ export const catalog: CatalogItem[] = [
       { label: "Standard", cost: 14, billingCycle: "monthly" },
       { label: "Plus", cost: 22, billingCycle: "monthly" },
     ]},
+  { name: "Granola", provider: "Granola", category: "productivity",
+    description: "AI-powered meeting notepad",
+    detail: "AI notepad that transcribes meeting audio and enhances your notes automatically. Customizable templates, action items, and one-click sharing to Slack, Notion, and CRM.",
+    tiers: [
+      { label: "Business", cost: 14, billingCycle: "monthly" },
+      { label: "Enterprise", cost: 35, billingCycle: "monthly" },
+    ]},
 
   // Dev Tools
   { name: "GitHub", provider: "GitHub", category: "dev-tools",
@@ -592,6 +613,12 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Starter", cost: 26, billingCycle: "monthly" },
       { label: "Pro", cost: 65, billingCycle: "monthly" },
+    ]},
+  { name: "Stagehand", provider: "Browserbase", category: "dev-tools",
+    description: "AI browser automation framework",
+    detail: "Open-source SDK for AI-powered browser automation. Natural language web interactions built on Playwright with self-healing selectors and LLM integration.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
 
   // Domains & DNS
