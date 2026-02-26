@@ -23,6 +23,9 @@ export const categoryLabels: Record<Category, string> = {
   "cloud": "Cloud Providers",
   "hosting": "Hosting & Deployment",
   "services": "Services & APIs",
+  "incorporation": "Incorporation",
+  "payments": "Payments",
+  "email": "Email",
   "marketing": "Marketing",
   "monitoring": "Monitoring & Analytics",
   "design": "Design",
@@ -34,8 +37,8 @@ export const categoryLabels: Record<Category, string> = {
 
 export const categories: Category[] = [
   "ai-models", "ai-coding", "ai-media", "database", "cloud", "hosting",
-  "services", "marketing", "monitoring", "design", "productivity",
-  "dev-tools", "domains", "security",
+  "services", "incorporation", "payments", "email", "marketing", "monitoring",
+  "design", "productivity", "dev-tools", "domains", "security",
 ]
 
 export const catalog: CatalogItem[] = [
@@ -361,20 +364,22 @@ export const catalog: CatalogItem[] = [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
       { label: "Pro", cost: 25, billingCycle: "monthly" },
     ]},
-  { name: "Stripe", provider: "Stripe", category: "services",
+  // Payments
+  { name: "Stripe", provider: "Stripe", category: "payments",
     description: "Payment processing platform",
     detail: "Payment infrastructure for the internet. Handles credit cards, subscriptions, invoicing, and payouts. 2.9% + 30c per transaction.",
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
-  { name: "Resend", provider: "Resend", category: "services",
+  // Email
+  { name: "Resend", provider: "Resend", category: "email",
     description: "Developer-first email API",
     detail: "Modern email API built for developers with React Email support. Simple SDK for transactional emails with high deliverability.",
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
       { label: "Pro", cost: 20, billingCycle: "monthly" },
     ]},
-  { name: "SendGrid", provider: "Twilio", category: "services",
+  { name: "SendGrid", provider: "Twilio", category: "email",
     description: "Transactional and marketing email",
     detail: "Cloud-based email delivery service for transactional and marketing emails. APIs for sending, tracking, and managing email at scale.",
     tiers: [
@@ -389,48 +394,49 @@ export const catalog: CatalogItem[] = [
       { label: "Startup", cost: 99, billingCycle: "monthly" },
     ]},
 
-  { name: "Stripe Atlas", provider: "Stripe", category: "services",
+  // Incorporation
+  { name: "Stripe Atlas", provider: "Stripe", category: "incorporation",
     description: "US company incorporation for startups",
     detail: "Delaware C-corp or LLC formation with EIN, registered agent, stock issuance, and partner discounts. First year of registered agent included.",
     tiers: [
       { label: "Formation", cost: 500, billingCycle: "yearly" },
     ]},
-  { name: "Doola", provider: "Doola", category: "services",
+  { name: "Doola", provider: "Doola", category: "incorporation",
     description: "LLC formation with compliance and bookkeeping",
     detail: "All-in-one business formation platform for US and non-US founders. Offers LLC/C-Corp setup, registered agent, bookkeeping, and tax filing bundles.",
     tiers: [
       { label: "Starter", cost: 297, billingCycle: "yearly" },
       { label: "Tax & Compliance", cost: 1999, billingCycle: "yearly" },
     ]},
-  { name: "Firstbase", provider: "Firstbase", category: "services",
+  { name: "Firstbase", provider: "Firstbase", category: "incorporation",
     description: "US company formation and ongoing compliance",
     detail: "Startup incorporation with ongoing compliance, virtual mailroom, accounting, and tax filing. Supports Delaware and Wyoming.",
     tiers: [
       { label: "Start", cost: 399, billingCycle: "yearly" },
       { label: "One (bundle)", cost: 199, billingCycle: "monthly" },
     ]},
-  { name: "Clerky", provider: "Clerky", category: "services",
+  { name: "Clerky", provider: "Clerky", category: "incorporation",
     description: "Startup legal paperwork for Delaware C-Corps",
     detail: "Automated legal document platform for incorporation, fundraising (SAFEs, convertible notes), hiring, and maintenance. Focused on VC-backed startups.",
     tiers: [
       { label: "Per Use", cost: 427, billingCycle: "yearly" },
       { label: "Lifetime", cost: 819, billingCycle: "yearly" },
     ]},
-  { name: "StartGlobal", provider: "StartGlobal", category: "services",
+  { name: "StartGlobal", provider: "StartGlobal", category: "incorporation",
     description: "US LLC formation for global founders",
     detail: "LLC formation service for non-US founders. Includes state filing, registered agent, EIN assistance, and business bank account setup.",
     tiers: [
       { label: "Formation", cost: 599, billingCycle: "yearly" },
       { label: "One (bundle)", cost: 149, billingCycle: "monthly" },
     ]},
-  { name: "LegalZoom", provider: "LegalZoom", category: "services",
+  { name: "LegalZoom", provider: "LegalZoom", category: "incorporation",
     description: "Online legal services and business formation",
     detail: "Online legal services platform for LLC and corporation formation, registered agent, operating agreements, and ongoing legal support.",
     tiers: [
       { label: "Pro", cost: 249, billingCycle: "yearly" },
       { label: "Registered Agent", cost: 249, billingCycle: "yearly" },
     ]},
-  { name: "RevenueCat", provider: "RevenueCat", category: "services",
+  { name: "RevenueCat", provider: "RevenueCat", category: "payments",
     description: "In-app subscription and payment infrastructure",
     detail: "SDK and dashboard for managing in-app purchases and subscriptions across iOS, Android, and web. Handles receipt validation, analytics, and entitlements.",
     tiers: [
@@ -486,7 +492,7 @@ export const catalog: CatalogItem[] = [
       { label: "Basic", cost: 10, billingCycle: "monthly" },
       { label: "Pro", cost: 30, billingCycle: "monthly" },
     ]},
-  { name: "Loops", provider: "Loops", category: "marketing",
+  { name: "Loops", provider: "Loops", category: "email",
     description: "Email platform built for SaaS",
     detail: "Email marketing and transactional email platform designed for SaaS companies. One plan with full feature access, pricing scales by contact count.",
     tiers: [
@@ -749,7 +755,7 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Growth", cost: 15, billingCycle: "monthly" },
     ]},
-  { name: "Screen Studio", provider: "Screen Studio", category: "dev-tools",
+  { name: "Screen Studio", provider: "Screen Studio", category: "marketing",
     description: "Professional screen recorder for macOS",
     detail: "Mac screen recording app that automatically produces polished product demos with zoom effects, cursor highlighting, and smooth motion.",
     tiers: [
