@@ -250,6 +250,14 @@ export const catalog: CatalogItem[] = [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
       { label: "Pro 2K", cost: 280, billingCycle: "monthly" },
     ]},
+  { name: "Neon", provider: "Neon", category: "database",
+    description: "Serverless Postgres with branching",
+    detail: "Serverless PostgreSQL with automatic scaling to zero, database branching, and instant point-in-time recovery. Pay only for compute and storage used.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Launch", cost: 19, billingCycle: "monthly" },
+      { label: "Scale", cost: 69, billingCycle: "monthly" },
+    ]},
   { name: "Pinecone", provider: "Pinecone", category: "database",
     description: "Managed vector database",
     detail: "Serverless vector database for AI applications. Store and query embeddings for semantic search, RAG, and recommendation systems.",
@@ -381,6 +389,74 @@ export const catalog: CatalogItem[] = [
       { label: "Startup", cost: 99, billingCycle: "monthly" },
     ]},
 
+  { name: "Stripe Atlas", provider: "Stripe", category: "services",
+    description: "US company incorporation for startups",
+    detail: "Delaware C-corp or LLC formation with EIN, registered agent, stock issuance, and partner discounts. First year of registered agent included.",
+    tiers: [
+      { label: "Formation", cost: 500, billingCycle: "yearly" },
+    ]},
+  { name: "Doola", provider: "Doola", category: "services",
+    description: "LLC formation with compliance and bookkeeping",
+    detail: "All-in-one business formation platform for US and non-US founders. Offers LLC/C-Corp setup, registered agent, bookkeeping, and tax filing bundles.",
+    tiers: [
+      { label: "Starter", cost: 297, billingCycle: "yearly" },
+      { label: "Tax & Compliance", cost: 1999, billingCycle: "yearly" },
+    ]},
+  { name: "Firstbase", provider: "Firstbase", category: "services",
+    description: "US company formation and ongoing compliance",
+    detail: "Startup incorporation with ongoing compliance, virtual mailroom, accounting, and tax filing. Supports Delaware and Wyoming.",
+    tiers: [
+      { label: "Start", cost: 399, billingCycle: "yearly" },
+      { label: "One (bundle)", cost: 199, billingCycle: "monthly" },
+    ]},
+  { name: "Clerky", provider: "Clerky", category: "services",
+    description: "Startup legal paperwork for Delaware C-Corps",
+    detail: "Automated legal document platform for incorporation, fundraising (SAFEs, convertible notes), hiring, and maintenance. Focused on VC-backed startups.",
+    tiers: [
+      { label: "Per Use", cost: 427, billingCycle: "yearly" },
+      { label: "Lifetime", cost: 819, billingCycle: "yearly" },
+    ]},
+  { name: "StartGlobal", provider: "StartGlobal", category: "services",
+    description: "US LLC formation for global founders",
+    detail: "LLC formation service for non-US founders. Includes state filing, registered agent, EIN assistance, and business bank account setup.",
+    tiers: [
+      { label: "Formation", cost: 599, billingCycle: "yearly" },
+      { label: "One (bundle)", cost: 149, billingCycle: "monthly" },
+    ]},
+  { name: "LegalZoom", provider: "LegalZoom", category: "services",
+    description: "Online legal services and business formation",
+    detail: "Online legal services platform for LLC and corporation formation, registered agent, operating agreements, and ongoing legal support.",
+    tiers: [
+      { label: "Pro", cost: 249, billingCycle: "yearly" },
+      { label: "Registered Agent", cost: 249, billingCycle: "yearly" },
+    ]},
+  { name: "RevenueCat", provider: "RevenueCat", category: "services",
+    description: "In-app subscription and payment infrastructure",
+    detail: "SDK and dashboard for managing in-app purchases and subscriptions across iOS, Android, and web. Handles receipt validation, analytics, and entitlements.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Apple Developer Program", provider: "Apple", category: "services",
+    description: "Publish apps to the App Store",
+    detail: "Required membership for publishing apps to the iOS and macOS App Stores. Includes TestFlight beta testing and developer tools.",
+    tiers: [
+      { label: "", cost: 99, billingCycle: "yearly" },
+    ]},
+  { name: "UploadThing", provider: "Ping Labs", category: "services",
+    description: "File uploads for TypeScript apps",
+    detail: "Simple file upload API and components for Next.js and TypeScript apps. Only charges for storage used, not seats or bandwidth.",
+    tiers: [
+      { label: "Starter", cost: 10, billingCycle: "monthly" },
+      { label: "Pro", cost: 25, billingCycle: "monthly" },
+    ]},
+  { name: "Cloudinary", provider: "Cloudinary", category: "services",
+    description: "Image and video management platform",
+    detail: "Cloud-based media management with on-the-fly image/video transformations, optimization, and CDN delivery.",
+    tiers: [
+      { label: "Plus", cost: 89, billingCycle: "monthly" },
+      { label: "Advanced", cost: 224, billingCycle: "monthly" },
+    ]},
+
   // Marketing
   { name: "X", provider: "X", category: "marketing",
     description: "Social media and microblogging platform",
@@ -409,6 +485,38 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Basic", cost: 10, billingCycle: "monthly" },
       { label: "Pro", cost: 30, billingCycle: "monthly" },
+    ]},
+  { name: "Loops", provider: "Loops", category: "marketing",
+    description: "Email platform built for SaaS",
+    detail: "Email marketing and transactional email platform designed for SaaS companies. One plan with full feature access, pricing scales by contact count.",
+    tiers: [
+      { label: "Starter", cost: 49, billingCycle: "monthly" },
+    ]},
+  { name: "Pallyy", provider: "Pallyy", category: "marketing",
+    description: "Social media scheduling for creators",
+    detail: "Social media scheduling and analytics for Instagram, TikTok, Facebook, LinkedIn, Twitter, and Pinterest. Priced per social set.",
+    tiers: [
+      { label: "Pay As You Go", cost: 20, billingCycle: "monthly" },
+      { label: "Unlimited", cost: 149, billingCycle: "monthly" },
+    ]},
+  { name: "AppTweak", provider: "AppTweak", category: "marketing",
+    description: "App Store Optimization intelligence",
+    detail: "ASO tool with keyword tracking, competitor analysis, download and revenue estimates, and App Store/Google Play optimization insights.",
+    tiers: [
+      { label: "Essential", cost: 79, billingCycle: "monthly" },
+      { label: "Grow", cost: 299, billingCycle: "monthly" },
+    ]},
+  { name: "Singular", provider: "Singular", category: "marketing",
+    description: "Mobile attribution and marketing analytics",
+    detail: "Unified marketing analytics platform with mobile attribution, fraud prevention, cost aggregation, and creative analytics.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Apple Search Ads", provider: "Apple", category: "marketing",
+    description: "App Store advertising platform",
+    detail: "Cost-per-tap advertising on the App Store using a second-price auction model. Promotes apps in search results and Today tab.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
   { name: "Loom", provider: "Atlassian", category: "marketing",
     description: "Async video messaging and demos",
@@ -477,6 +585,13 @@ export const catalog: CatalogItem[] = [
       { label: "Starter", cost: 24, billingCycle: "monthly" },
       { label: "Team", cost: 64, billingCycle: "monthly" },
     ]},
+  { name: "Plausible", provider: "Plausible", category: "monitoring",
+    description: "Privacy-friendly web analytics",
+    detail: "Lightweight, open-source, cookie-free web analytics. GDPR/CCPA compliant by default. No personal data collection. Self-hostable or cloud.",
+    tiers: [
+      { label: "Starter", cost: 9, billingCycle: "monthly" },
+      { label: "Growing", cost: 19, billingCycle: "monthly" },
+    ]},
   { name: "Axiom", provider: "Axiom", category: "monitoring",
     description: "Log management and analytics",
     detail: "Cloud-native log management with unlimited data ingestion and retention. Query logs, traces, and events with a serverless architecture.",
@@ -510,6 +625,12 @@ export const catalog: CatalogItem[] = [
     detail: "Searchable database of movie stills and cinematography references. Used by filmmakers and visual artists for lighting and composition research.",
     tiers: [
       { label: "", cost: 12.95, billingCycle: "monthly" },
+    ]},
+  { name: "LottieFiles", provider: "LottieFiles", category: "design",
+    description: "Lottie animation platform",
+    detail: "Platform for discovering, creating, editing, and sharing Lottie animations. Includes web editor, Figma/After Effects plugins, and animation hosting.",
+    tiers: [
+      { label: "Creator", cost: 20, billingCycle: "monthly" },
     ]},
   { name: "Savee", provider: "Savee", category: "design",
     description: "Visual bookmarking for creatives",
@@ -560,6 +681,14 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Business", cost: 14, billingCycle: "monthly" },
       { label: "Enterprise", cost: 35, billingCycle: "monthly" },
+    ]},
+
+  { name: "Calendly", provider: "Calendly", category: "productivity",
+    description: "Scheduling and appointment booking",
+    detail: "Scheduling platform that lets others book time on your calendar. Supports group events, round-robin routing, and CRM integrations.",
+    tiers: [
+      { label: "Standard", cost: 12, billingCycle: "monthly" },
+      { label: "Teams", cost: 20, billingCycle: "monthly" },
     ]},
 
   // Dev Tools
@@ -613,6 +742,25 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Starter", cost: 26, billingCycle: "monthly" },
       { label: "Pro", cost: 65, billingCycle: "monthly" },
+    ]},
+  { name: "Sanity", provider: "Sanity", category: "dev-tools",
+    description: "Composable content management platform",
+    detail: "Headless CMS with real-time collaborative editing, structured content, and GROQ query language. Popular with Next.js and React projects.",
+    tiers: [
+      { label: "Growth", cost: 15, billingCycle: "monthly" },
+    ]},
+  { name: "Screen Studio", provider: "Screen Studio", category: "dev-tools",
+    description: "Professional screen recorder for macOS",
+    detail: "Mac screen recording app that automatically produces polished product demos with zoom effects, cursor highlighting, and smooth motion.",
+    tiers: [
+      { label: "Annual", cost: 108, billingCycle: "yearly" },
+      { label: "Monthly", cost: 29, billingCycle: "monthly" },
+    ]},
+  { name: "Willow Voice", provider: "Willow", category: "dev-tools",
+    description: "AI voice dictation for Mac and iOS",
+    detail: "Speech-to-text dictation app that works across all apps. High-accuracy AI transcription with editing capabilities for code and prose.",
+    tiers: [
+      { label: "Pro", cost: 15, billingCycle: "monthly" },
     ]},
   { name: "Stagehand", provider: "Browserbase", category: "dev-tools",
     description: "AI browser automation framework",
@@ -674,12 +822,6 @@ export const catalog: CatalogItem[] = [
       { label: "50 GB", cost: 1, billingCycle: "monthly" },
       { label: "200 GB", cost: 3, billingCycle: "monthly" },
       { label: "2 TB", cost: 10, billingCycle: "monthly" },
-    ]},
-  { name: "Apple Developer Program", provider: "Apple", category: "security",
-    description: "Publish apps to the App Store",
-    detail: "Required membership for publishing apps to the iOS and macOS App Stores. Includes TestFlight beta testing and developer tools.",
-    tiers: [
-      { label: "", cost: 99, billingCycle: "yearly" },
     ]},
 ]
 
