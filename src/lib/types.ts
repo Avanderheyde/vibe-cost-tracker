@@ -8,8 +8,6 @@ export type Category =
   | "hosting"
   | "services"
   | "incorporation"
-  | "payments"
-  | "email"
   | "marketing"
   | "monitoring"
   | "design"

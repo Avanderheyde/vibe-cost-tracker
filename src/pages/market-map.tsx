@@ -16,6 +16,7 @@ const CATEGORY_COLORS: Record<Category, string> = {
   "cloud": "bg-sky-600",
   "hosting": "bg-blue-600",
   "services": "bg-amber-600",
+  "incorporation": "bg-yellow-700",
   "marketing": "bg-rose-600",
   "monitoring": "bg-teal-600",
   "design": "bg-fuchsia-600",
@@ -60,6 +61,7 @@ const CATALOG_URLS: Record<string, string> = {
   "Turso": "https://turso.tech",
   "Upstash": "https://upstash.com",
   "Pinecone": "https://pinecone.io",
+  "Neon": "https://neon.tech",
   // Cloud Providers
   "AWS": "https://aws.amazon.com",
   "Azure": "https://azure.microsoft.com",
@@ -79,14 +81,31 @@ const CATALOG_URLS: Record<string, string> = {
   "Clerk": "https://clerk.com",
   "Stripe": "https://stripe.com",
   "Browserbase": "https://browserbase.com",
-  "Resend": "https://resend.com",
-  "SendGrid": "https://sendgrid.com",
+  "RevenueCat": "https://revenuecat.com",
+  "Apple Developer Program": "https://developer.apple.com/programs",
+  "UploadThing": "https://uploadthing.com",
+  "Cloudinary": "https://cloudinary.com",
+  // Incorporation
+  "Stripe Atlas": "https://stripe.com/atlas",
+  "Doola": "https://doola.com",
+  "Firstbase": "https://firstbase.io",
+  "Clerky": "https://clerky.com",
+  "StartGlobal": "https://startglobal.co",
+  "LegalZoom": "https://legalzoom.com",
   // Marketing
   "X": "https://x.com",
   "Mailchimp": "https://mailchimp.com",
   "Canva": "https://canva.com",
   "Framer": "https://framer.com",
   "Loom": "https://loom.com",
+  "Resend": "https://resend.com",
+  "SendGrid": "https://sendgrid.com",
+  "Loops": "https://loops.so",
+  "Pallyy": "https://pallyy.com",
+  "AppTweak": "https://apptweak.com",
+  "Singular": "https://singular.net",
+  "Apple Search Ads": "https://searchads.apple.com",
+  "Screen Studio": "https://screen.studio",
   // Monitoring & Analytics
   "PostHog": "https://posthog.com",
   "Sentry": "https://sentry.io",
@@ -99,11 +118,13 @@ const CATALOG_URLS: Record<string, string> = {
   "Checkly": "https://checklyhq.com",
   "Axiom": "https://axiom.co",
   "PagerDuty": "https://pagerduty.com",
+  "Plausible": "https://plausible.io",
   // Design
   "Figma": "https://figma.com",
   "Mobbin": "https://mobbin.com",
   "ShotDeck": "https://shotdeck.com",
   "Savee": "https://savee.it",
+  "LottieFiles": "https://lottiefiles.com",
   // Productivity
   "Notion": "https://notion.so",
   "Obsidian": "https://obsidian.md",
@@ -111,6 +132,7 @@ const CATALOG_URLS: Record<string, string> = {
   "Linear": "https://linear.app",
   "Google Workspace": "https://workspace.google.com",
   "Granola": "https://granola.ai",
+  "Calendly": "https://calendly.com",
   // Dev Tools
   "GitHub": "https://github.com",
   "Docker Desktop": "https://docker.com/products/docker-desktop",
@@ -121,6 +143,8 @@ const CATALOG_URLS: Record<string, string> = {
   "SuperWhisper": "https://superwhisper.com",
   "n8n": "https://n8n.io",
   "Stagehand": "https://stagehand.dev",
+  "Sanity": "https://sanity.io",
+  "Willow Voice": "https://willow.direct",
   // Domains & DNS
   "Namecheap": "https://namecheap.com",
   // Security & Privacy
@@ -130,7 +154,6 @@ const CATALOG_URLS: Record<string, string> = {
   "Fastmail": "https://fastmail.com",
   "Mullvad VPN": "https://mullvad.net",
   "iCloud+": "https://apple.com/icloud",
-  "Apple Developer Program": "https://developer.apple.com/programs",
 }
 
 export default function MarketMapPage() {

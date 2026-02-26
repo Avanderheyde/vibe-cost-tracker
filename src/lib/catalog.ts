@@ -24,8 +24,6 @@ export const categoryLabels: Record<Category, string> = {
   "hosting": "Hosting & Deployment",
   "services": "Services & APIs",
   "incorporation": "Incorporation",
-  "payments": "Payments",
-  "email": "Email",
   "marketing": "Marketing",
   "monitoring": "Monitoring & Analytics",
   "design": "Design",
@@ -37,7 +35,7 @@ export const categoryLabels: Record<Category, string> = {
 
 export const categories: Category[] = [
   "ai-models", "ai-coding", "ai-media", "database", "cloud", "hosting",
-  "services", "incorporation", "payments", "email", "marketing", "monitoring",
+  "services", "incorporation", "marketing", "monitoring",
   "design", "productivity", "dev-tools", "domains", "security",
 ]
 
@@ -364,22 +362,20 @@ export const catalog: CatalogItem[] = [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
       { label: "Pro", cost: 25, billingCycle: "monthly" },
     ]},
-  // Payments
-  { name: "Stripe", provider: "Stripe", category: "payments",
+  { name: "Stripe", provider: "Stripe", category: "services",
     description: "Payment processing platform",
     detail: "Payment infrastructure for the internet. Handles credit cards, subscriptions, invoicing, and payouts. 2.9% + 30c per transaction.",
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
-  // Email
-  { name: "Resend", provider: "Resend", category: "email",
+  { name: "Resend", provider: "Resend", category: "marketing",
     description: "Developer-first email API",
     detail: "Modern email API built for developers with React Email support. Simple SDK for transactional emails with high deliverability.",
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
       { label: "Pro", cost: 20, billingCycle: "monthly" },
     ]},
-  { name: "SendGrid", provider: "Twilio", category: "email",
+  { name: "SendGrid", provider: "Twilio", category: "marketing",
     description: "Transactional and marketing email",
     detail: "Cloud-based email delivery service for transactional and marketing emails. APIs for sending, tracking, and managing email at scale.",
     tiers: [
@@ -436,7 +432,7 @@ export const catalog: CatalogItem[] = [
       { label: "Pro", cost: 249, billingCycle: "yearly" },
       { label: "Registered Agent", cost: 249, billingCycle: "yearly" },
     ]},
-  { name: "RevenueCat", provider: "RevenueCat", category: "payments",
+  { name: "RevenueCat", provider: "RevenueCat", category: "services",
     description: "In-app subscription and payment infrastructure",
     detail: "SDK and dashboard for managing in-app purchases and subscriptions across iOS, Android, and web. Handles receipt validation, analytics, and entitlements.",
     tiers: [
@@ -492,7 +488,7 @@ export const catalog: CatalogItem[] = [
       { label: "Basic", cost: 10, billingCycle: "monthly" },
       { label: "Pro", cost: 30, billingCycle: "monthly" },
     ]},
-  { name: "Loops", provider: "Loops", category: "email",
+  { name: "Loops", provider: "Loops", category: "marketing",
     description: "Email platform built for SaaS",
     detail: "Email marketing and transactional email platform designed for SaaS companies. One plan with full feature access, pricing scales by contact count.",
     tiers: [
