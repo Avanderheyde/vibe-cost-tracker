@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { NavLink } from "react-router-dom"
-import { LayoutDashboard, FolderOpen, CreditCard, Settings, PanelLeftClose, PanelLeft } from "lucide-react"
+import { LayoutDashboard, FolderOpen, CreditCard, Map, Settings, PanelLeftClose, PanelLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
@@ -9,6 +9,7 @@ const links = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/projects", label: "Projects", icon: FolderOpen },
   { to: "/subscriptions", label: "Subscriptions", icon: CreditCard },
+  { to: "/market-map", label: "Market Map", icon: Map },
   { to: "/settings", label: "Settings", icon: Settings },
 ]
 

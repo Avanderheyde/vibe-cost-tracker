@@ -7,6 +7,7 @@ import DashboardPage from "@/pages/dashboard"
 import ProjectsPage from "@/pages/projects"
 import SubscriptionsPage from "@/pages/subscriptions"
 import SettingsPage from "@/pages/settings"
+import MarketMapPage from "@/pages/market-map"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/subscriptions" element={<SubscriptionsPage />} />
+                <Route path="/market-map" element={<MarketMapPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Routes>
             </main>

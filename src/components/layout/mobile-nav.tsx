@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom"
-import { LayoutDashboard, FolderOpen, CreditCard, Settings } from "lucide-react"
+import { LayoutDashboard, FolderOpen, CreditCard, Map, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const links = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/projects", label: "Projects", icon: FolderOpen },
   { to: "/subscriptions", label: "Subs", icon: CreditCard },
+  { to: "/market-map", label: "Map", icon: Map },
   { to: "/settings", label: "Settings", icon: Settings },
 ]
 
