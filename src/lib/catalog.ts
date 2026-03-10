@@ -458,6 +458,21 @@ export const catalog: CatalogItem[] = [
       { label: "Plus", cost: 89, billingCycle: "monthly" },
       { label: "Advanced", cost: 224, billingCycle: "monthly" },
     ]},
+  { name: "ScreenshotOne", provider: "ScreenshotOne", category: "services",
+    description: "Website screenshot and rendering API",
+    detail: "API for capturing website screenshots with customizable viewport, format, and rendering options. Supports full-page captures, PDF generation, and animated screenshots.",
+    tiers: [
+      { label: "Basic", cost: 17, billingCycle: "monthly" },
+      { label: "Growth", cost: 79, billingCycle: "monthly" },
+      { label: "Scale", cost: 259, billingCycle: "monthly" },
+    ]},
+  { name: "Inngest", provider: "Inngest", category: "services",
+    description: "Durable workflow and background job platform",
+    detail: "Event-driven workflow engine for background jobs, scheduled tasks, and durable functions. Handles retries, concurrency, and step functions with a developer-friendly SDK.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Pro", cost: 75, billingCycle: "monthly" },
+    ]},
 
   // Marketing
   { name: "X", provider: "X", category: "marketing",
