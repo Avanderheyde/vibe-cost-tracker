@@ -12,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Area, AreaChart, Pie, PieChart, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
-import type { Subscription } from "@/lib/types"
+import type { Category, Subscription } from "@/lib/types"
 
 
 const CHART_COLORS = [
@@ -95,7 +95,7 @@ export default function DashboardPage() {
 
   const pieData = useMemo(() => {
     return Object.entries(byCategory).map(([category, total]) => ({
-      name: categoryLabels[category] || category,
+      name: categoryLabels[category as Category] || category,
       category,
       value: Math.round(total * 100) / 100,
     }))
@@ -103,7 +103,7 @@ export default function DashboardPage() {
 
   const openCategory = (category: string, total: number) => {
     const subs = subscriptions.filter((s) => s.isActive && s.category === category)
-    setDialogTitle(categoryLabels[category] || category)
+    setDialogTitle(categoryLabels[category as Category] || category)
     setDialogSubs(subs)
     setDialogTotal(total)
     setDialogOpen(true)

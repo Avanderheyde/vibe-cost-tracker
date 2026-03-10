@@ -28,7 +28,7 @@ describe("catalog", () => {
 
   it("builds display name from item and tier", () => {
     expect(tierDisplayName(
-      { name: "Claude", provider: "Anthropic", category: "llm", description: "", detail: "", tiers: [] },
+      { name: "Claude", provider: "Anthropic", category: "ai-models", description: "", detail: "", tiers: [] },
       { label: "Pro", cost: 20, billingCycle: "monthly" },
     )).toBe("Claude Pro")
     expect(tierDisplayName(

@@ -247,7 +247,6 @@ export default function MarketMapPage() {
 
       <Dialog open={selectedItem !== null} onOpenChange={(open) => { if (!open) setSelectedItem(null) }}>
         {selectedItem && (() => {
-          const tier = selectedItem.tiers[selectedTierIdx]
           const url = CATALOG_URLS[selectedItem.name]
           const alreadySubscribed = subscribedNames.has(selectedItem.name.toLowerCase())
 
