@@ -353,6 +353,18 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "Pro", cost: 29, billingCycle: "monthly" },
     ]},
+  { name: "Fastly", provider: "Fastly", category: "hosting",
+    description: "Edge cloud platform and CDN",
+    detail: "Edge cloud platform for fast, secure, and scalable content delivery. Offers real-time analytics, instant purging, and edge compute with Compute@Edge.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Akamai", provider: "Akamai", category: "hosting",
+    description: "CDN, security, and cloud computing platform",
+    detail: "Global content delivery network and cloud security provider. Offers web performance, DDoS protection, bot management, API security, and edge computing.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
 
   // Services & APIs
   { name: "Clerk", provider: "Clerk", category: "services",
@@ -839,6 +851,12 @@ export const catalog: CatalogItem[] = [
       { label: "50 GB", cost: 1, billingCycle: "monthly" },
       { label: "200 GB", cost: 3, billingCycle: "monthly" },
       { label: "2 TB", cost: 10, billingCycle: "monthly" },
+    ]},
+  { name: "DataDome", provider: "DataDome", category: "security",
+    description: "Bot and online fraud protection",
+    detail: "Real-time bot detection and fraud protection for websites, mobile apps, and APIs. Uses AI to block credential stuffing, scraping, and layer 7 DDoS attacks.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
 ]
 

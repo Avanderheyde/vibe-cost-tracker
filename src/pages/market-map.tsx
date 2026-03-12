@@ -77,6 +77,8 @@ const CATALOG_URLS: Record<string, string> = {
   "Heroku": "https://heroku.com",
   "Coolify": "https://coolify.io",
   "Koyeb": "https://koyeb.com",
+  "Fastly": "https://fastly.com",
+  "Akamai": "https://akamai.com",
   // Services & APIs
   "Clerk": "https://clerk.com",
   "Stripe": "https://stripe.com",
@@ -154,6 +156,7 @@ const CATALOG_URLS: Record<string, string> = {
   "Fastmail": "https://fastmail.com",
   "Mullvad VPN": "https://mullvad.net",
   "iCloud+": "https://apple.com/icloud",
+  "DataDome": "https://datadome.co",
 }
 
 export default function MarketMapPage() {
