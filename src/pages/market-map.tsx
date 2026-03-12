@@ -232,6 +232,14 @@ export default function MarketMapPage() {
                     }`}
                   >
                     {owned && <Check className="h-3 w-3 shrink-0" />}
+                    {CATALOG_URLS[item.name] && (
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${new URL(CATALOG_URLS[item.name]).hostname}&sz=32`}
+                        alt=""
+                        className="h-4 w-4 shrink-0 rounded-sm"
+                        loading="lazy"
+                      />
+                    )}
                     <span>{item.name}</span>
                     {!owned && item.provider && item.provider !== item.name && (
                       <span className="text-muted-foreground">· {item.provider}</span>
@@ -257,6 +265,13 @@ export default function MarketMapPage() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
+                  {url && (
+                    <img
+                      src={`https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`}
+                      alt=""
+                      className="h-6 w-6 rounded-sm"
+                    />
+                  )}
                   {selectedItem.name}
                   {selectedItem.provider && selectedItem.provider !== selectedItem.name && (
                     <span className="text-sm font-normal text-muted-foreground">by {selectedItem.provider}</span>
