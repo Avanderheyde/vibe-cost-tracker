@@ -43,8 +43,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   if (!ready) return null
 
   const value: StoreContextValue = {
-    projects: store.getProjects(),
-    subscriptions: store.getSubscriptions(),
+    projects: [...store.getProjects()],
+    subscriptions: [...store.getSubscriptions()],
 
     addProject: (input) => { const p = store.addProject(input); bump(); return p },
     updateProject: (id, updates) => { store.updateProject(id, updates); bump() },
