@@ -127,11 +127,12 @@ export default function SubscriptionsPage() {
   }
 
   const handleSubmit = () => {
-    if (!name.trim() || !cost) return
+    if (!name.trim()) return
+    const parsedCost = parseFloat(cost) || 0
     const input = {
       name: name.trim(),
       provider: provider.trim(),
-      cost: parseFloat(cost),
+      cost: parsedCost,
       quantity: parseInt(quantity) || 1,
       billingCycle,
       category,
@@ -141,11 +142,21 @@ export default function SubscriptionsPage() {
     }
     if (editingId) {
       updateSubscription(editingId, input)
+      setDialogOpen(false)
+      resetForm()
     } else {
-      addSubscription(input)
+      const sub = addSubscription(input)
+      setDialogOpen(false)
+      resetForm()
+      // For usage-based services ($0), immediately open the top-up dialog
+      if (parsedCost === 0) {
+        setTopUpSubId(sub.id)
+        setTopUpAmount("")
+        setTopUpDate(new Date().toISOString().slice(0, 10))
+        setTopUpNote("")
+        setTopUpDialogOpen(true)
+      }
     }
-    setDialogOpen(false)
-    resetForm()
   }
 
   const handleAddFromCatalog = (item: CatalogItem, tier: CatalogTier) => {
@@ -444,7 +455,18 @@ export default function SubscriptionsPage() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium">
-                      {sub.billingCycle === "monthly" ? (
+                      {sub.cost === 0 ? (() => {
+                        const subTopUps = getTopUpsBySubscription(sub.id)
+                        const total = subTopUps.reduce((s, t) => s + t.amount, 0)
+                        return (
+                          <>
+                            <div>${total.toFixed(2)} loaded</div>
+                            <div className="text-xs text-muted-foreground">
+                              {subTopUps.length} top-up{subTopUps.length !== 1 ? "s" : ""} · By usage
+                            </div>
+                          </>
+                        )
+                      })() : sub.billingCycle === "monthly" ? (
                         <>
                           <div>${((sub.quantity ?? 1) * sub.cost).toFixed(2)}/mo</div>
                           {(sub.quantity ?? 1) > 1 && (
