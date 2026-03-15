@@ -77,13 +77,11 @@ export default function DashboardPage() {
   }, [topUpsByMonth])
 
   const upcomingRenewals = useMemo(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
     return subscriptions
       .filter((s) => s.isActive && s.nextPaymentDate)
       .map((s) => {
         const date = new Date(s.nextPaymentDate! + "T00:00:00")
-        return { ...s, parsedDate: date, overdue: date < today }
+        return { ...s, parsedDate: date }
       })
       .sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime())
       .slice(0, 7)
@@ -271,7 +269,7 @@ export default function DashboardPage() {
             {upcomingRenewals.map((r) => (
               <div
                 key={r.id}
-                className={`flex items-center justify-between rounded-md border p-3 ${r.overdue ? "border-destructive/50 bg-destructive/5" : ""}`}
+                className="flex items-center justify-between rounded-md border p-3"
               >
                 <div>
                   <div className="font-medium">{r.name}</div>
@@ -279,7 +277,6 @@ export default function DashboardPage() {
                 </div>
                 <div className="text-right">
                   <div className="text-sm">{r.parsedDate.toLocaleDateString()}</div>
-                  {r.overdue && <div className="text-xs font-medium text-destructive">Overdue</div>}
                 </div>
               </div>
             ))}

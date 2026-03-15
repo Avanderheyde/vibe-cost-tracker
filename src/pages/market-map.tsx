@@ -2,11 +2,13 @@ import { useMemo, useState } from "react"
 import { useStore } from "@/lib/store-context"
 import { catalog, categories, categoryLabels, tierDisplayName, formatTierCost, type CatalogItem } from "@/lib/catalog"
 import type { Category } from "@/lib/types"
-import { Check, ExternalLink } from "lucide-react"
+import { Check, ExternalLink, Trash2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 const CATEGORY_COLORS: Record<Category, string> = {
   "ai-models": "bg-violet-600",
@@ -164,17 +166,24 @@ const CATALOG_URLS: Record<string, string> = {
 }
 
 export default function MarketMapPage() {
-  const { subscriptions, projects, addSubscription } = useStore()
+  const { subscriptions, projects, addSubscription, addTopUp, deleteTopUp, getTopUpsBySubscription } = useStore()
 
   const [selectedItem, setSelectedItem] = useState<CatalogItem | null>(null)
   const [selectedTierIdx, setSelectedTierIdx] = useState(0)
   const [selectedProjectId, setSelectedProjectId] = useState<string>("none")
 
+  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false)
+  const [topUpSubId, setTopUpSubId] = useState<string | null>(null)
+  const [topUpSubName, setTopUpSubName] = useState("")
+  const [topUpAmount, setTopUpAmount] = useState("")
+  const [topUpDate, setTopUpDate] = useState(() => new Date().toISOString().slice(0, 10))
+  const [topUpNote, setTopUpNote] = useState("")
+
   const subscribedNames = useMemo(() => {
     const names = new Set<string>()
     for (const sub of subscriptions) {
       // Match on the base product name (strip tier label like "Claude Max (20x)" -> "Claude")
-      const base = sub.name.split(/\s+(Pro|Plus|Max|Premium|Business|Starter|Team|Basic|Ultra|Core|Dev|Standard|Build|Cloud|Eco|Individual|Organization)\b/)[0]
+      const base = sub.name.split(/\s+(Pro|Plus|Max|Premium|Business|Starter|Team|Basic|Ultra|Core|Dev|Standard|Build|Cloud|Eco|Individual|Organization|By usage)\b/)[0]
       names.add(base.toLowerCase())
       names.add(sub.name.toLowerCase())
     }
@@ -193,7 +202,7 @@ export default function MarketMapPage() {
   const handleAdd = () => {
     if (!selectedItem) return
     const tier = selectedItem.tiers[selectedTierIdx]
-    addSubscription({
+    const sub = addSubscription({
       name: tierDisplayName(selectedItem, tier),
       provider: selectedItem.provider,
       cost: tier.cost,
@@ -207,6 +216,15 @@ export default function MarketMapPage() {
     setSelectedItem(null)
     setSelectedTierIdx(0)
     setSelectedProjectId("none")
+    // For by-usage services, open the top-up dialog
+    if (tier.cost === 0) {
+      setTopUpSubId(sub.id)
+      setTopUpSubName(tierDisplayName(selectedItem, tier))
+      setTopUpAmount("")
+      setTopUpDate(new Date().toISOString().slice(0, 10))
+      setTopUpNote("")
+      setTopUpDialogOpen(true)
+    }
   }
 
   return (
@@ -360,6 +378,71 @@ export default function MarketMapPage() {
             </DialogContent>
           )
         })()}
+      </Dialog>
+
+      <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>How much did you load? — {topUpSubName}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="mm-topup-amount">Amount ($)</Label>
+                <Input id="mm-topup-amount" type="number" step="0.01" value={topUpAmount} onChange={(e) => setTopUpAmount(e.target.value)} placeholder="100.00" autoFocus />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mm-topup-date">Date</Label>
+                <Input id="mm-topup-date" type="date" value={topUpDate} onChange={(e) => setTopUpDate(e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mm-topup-note">Note</Label>
+              <Input id="mm-topup-note" value={topUpNote} onChange={(e) => setTopUpNote(e.target.value)} placeholder="e.g. Loaded credits via dashboard" />
+            </div>
+            {topUpSubId && (() => {
+              const history = getTopUpsBySubscription(topUpSubId)
+              if (history.length === 0) return null
+              return (
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground">Recent top-ups</Label>
+                  <div className="max-h-32 overflow-y-auto space-y-1">
+                    {history.slice().sort((a, b) => b.date.localeCompare(a.date)).map((t) => (
+                      <div key={t.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                        <div>
+                          <span className="font-medium">${t.amount.toFixed(2)}</span>
+                          <span className="ml-2 text-muted-foreground">{t.note}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">{new Date(t.date + "T00:00:00").toLocaleDateString()}</span>
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => deleteTopUp(t.id)}>
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Skip</Button>
+            </DialogClose>
+            <Button onClick={() => {
+              if (!topUpSubId || !topUpAmount) return
+              addTopUp({
+                subscriptionId: topUpSubId,
+                amount: parseFloat(topUpAmount),
+                date: topUpDate,
+                note: topUpNote.trim(),
+              })
+              setTopUpAmount("")
+              setTopUpNote("")
+            }}>Log Top-Up</Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   )

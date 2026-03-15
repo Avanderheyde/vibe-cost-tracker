@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
 import { useStore } from "@/lib/store-context"
 import { catalog, categories, categoryLabels, tierDisplayName, formatTierCost, domainTLDs, domainRegistrars, type CatalogItem, type CatalogTier } from "@/lib/catalog"
 import type { Category, BillingCycle } from "@/lib/types"
@@ -96,10 +97,16 @@ export default function SubscriptionsPage() {
   const [domainRegistrar, setDomainRegistrar] = useState("Cloudflare")
   const [nextPaymentDate, setNextPaymentDate] = useState("")
 
+  const [searchParams] = useSearchParams()
   const [searchText, setSearchText] = useState("")
   const [filterCategory, setFilterCategory] = useState("all")
   const [filterProject, setFilterProject] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
+
+  useEffect(() => {
+    const projectParam = searchParams.get("project")
+    if (projectParam) setFilterProject(projectParam)
+  }, [searchParams])
 
   const filteredSubscriptions = useMemo(() => {
     return subscriptions.filter((sub) => {
@@ -161,6 +168,26 @@ export default function SubscriptionsPage() {
 
   const handleAddFromCatalog = (item: CatalogItem, tier: CatalogTier) => {
     setCatalogOpen(false)
+    // For by-usage services, skip the subscription form entirely
+    if (tier.cost === 0) {
+      const sub = addSubscription({
+        name: tierDisplayName(item, tier),
+        provider: item.provider,
+        cost: 0,
+        quantity: 1,
+        billingCycle: tier.billingCycle,
+        category: item.category,
+        nextPaymentDate: null,
+        projectId: quickAddProjectId === "none" ? null : quickAddProjectId,
+        isActive: true,
+      })
+      setTopUpSubId(sub.id)
+      setTopUpAmount("")
+      setTopUpDate(new Date().toISOString().slice(0, 10))
+      setTopUpNote("")
+      setTopUpDialogOpen(true)
+      return
+    }
     setEditingId(null)
     setCost(tier.cost.toString())
     setQuantity("1")

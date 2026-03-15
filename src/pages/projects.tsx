@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Plus, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { Link } from "react-router-dom"
 
 function ProjectBudgetCell({ projectId, monthlyTotal, getBudget, setBudget }: {
   projectId: string
@@ -203,10 +204,10 @@ export default function ProjectsPage() {
               return (
                 <TableRow key={project.id}>
                   <TableCell>
-                    <div className="flex items-center gap-2">
+                    <Link to={`/subscriptions?project=${project.id}`} className="flex items-center gap-2 hover:underline">
                       <div className="h-3 w-3 rounded-full" style={{ backgroundColor: project.color }} />
                       <span className="font-medium">{project.name}</span>
-                    </div>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{project.description || "\u2014"}</TableCell>
                   <TableCell>{subCount}</TableCell>
