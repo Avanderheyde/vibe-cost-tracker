@@ -30,7 +30,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Plus, MoreHorizontal, Pencil, Trash2, Power, PowerOff, BookOpen } from "lucide-react"
+import { Plus, MoreHorizontal, Pencil, Trash2, Power, PowerOff, BookOpen, DollarSign } from "lucide-react"
 
 function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: CatalogItem, tier: CatalogTier) => void }) {
   const [selectedIdx, setSelectedIdx] = useState(0)
@@ -71,10 +71,15 @@ function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: Catalog
 
 
 export default function SubscriptionsPage() {
-  const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription } = useStore()
+  const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription, topUps, addTopUp, deleteTopUp, getTopUpsBySubscription } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [topUpDialogOpen, setTopUpDialogOpen] = useState(false)
+  const [topUpSubId, setTopUpSubId] = useState<string | null>(null)
+  const [topUpAmount, setTopUpAmount] = useState("")
+  const [topUpDate, setTopUpDate] = useState(() => new Date().toISOString().slice(0, 10))
+  const [topUpNote, setTopUpNote] = useState("")
   const [quickAddProjectId, setQuickAddProjectId] = useState<string>("none")
   const [catalogCategory, setCatalogCategory] = useState<Category>("ai-models")
 
@@ -480,6 +485,15 @@ export default function SubscriptionsPage() {
                             {sub.isActive ? <PowerOff className="mr-2 h-4 w-4" /> : <Power className="mr-2 h-4 w-4" />}
                             {sub.isActive ? "Deactivate" : "Activate"}
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            setTopUpSubId(sub.id)
+                            setTopUpAmount("")
+                            setTopUpDate(new Date().toISOString().slice(0, 10))
+                            setTopUpNote("")
+                            setTopUpDialogOpen(true)
+                          }}>
+                            <DollarSign className="mr-2 h-4 w-4" /> Log Top-Up
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive" onClick={() => deleteSubscription(sub.id)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                           </DropdownMenuItem>
@@ -493,6 +507,76 @@ export default function SubscriptionsPage() {
           </Table>
         )}
       </div>
+
+      <Dialog open={topUpDialogOpen} onOpenChange={setTopUpDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Log Top-Up {topUpSubId && (() => {
+                const sub = subscriptions.find((s) => s.id === topUpSubId)
+                return sub ? `— ${sub.name}` : ""
+              })()}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="topup-amount">Amount ($)</Label>
+                <Input id="topup-amount" type="number" step="0.01" value={topUpAmount} onChange={(e) => setTopUpAmount(e.target.value)} placeholder="100.00" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="topup-date">Date</Label>
+                <Input id="topup-date" type="date" value={topUpDate} onChange={(e) => setTopUpDate(e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="topup-note">Note</Label>
+              <Input id="topup-note" value={topUpNote} onChange={(e) => setTopUpNote(e.target.value)} placeholder="e.g. Loaded credits via dashboard" />
+            </div>
+            {topUpSubId && (() => {
+              const history = getTopUpsBySubscription(topUpSubId)
+              if (history.length === 0) return null
+              return (
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground">Recent top-ups</Label>
+                  <div className="max-h-32 overflow-y-auto space-y-1">
+                    {history.slice().sort((a, b) => b.date.localeCompare(a.date)).map((t) => (
+                      <div key={t.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
+                        <div>
+                          <span className="font-medium">${t.amount.toFixed(2)}</span>
+                          <span className="ml-2 text-muted-foreground">{t.note}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">{new Date(t.date + "T00:00:00").toLocaleDateString()}</span>
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => deleteTopUp(t.id)}>
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button onClick={() => {
+              if (!topUpSubId || !topUpAmount) return
+              addTopUp({
+                subscriptionId: topUpSubId,
+                amount: parseFloat(topUpAmount),
+                date: topUpDate,
+                note: topUpNote.trim(),
+              })
+              setTopUpAmount("")
+              setTopUpNote("")
+            }}>Log Top-Up</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

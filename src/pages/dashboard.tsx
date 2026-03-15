@@ -52,7 +52,7 @@ function BreakdownList({ subs }: { subs: Subscription[] }) {
 }
 
 export default function DashboardPage() {
-  const { subscriptions, getMonthlyTotal, getTotalsByCategory, getMonthlyBudget, setMonthlyBudget } = useStore()
+  const { subscriptions, getMonthlyTotal, getTotalsByCategory, getMonthlyBudget, setMonthlyBudget, getTopUpsByMonth } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogSubs, setDialogSubs] = useState<Subscription[]>([])
@@ -68,6 +68,13 @@ export default function DashboardPage() {
   const yearlyTotal = monthlyTotal * 12
   const byCategory = getTotalsByCategory()
   const activeCount = subscriptions.filter((s) => s.isActive).length
+  const topUpsByMonth = getTopUpsByMonth()
+
+  const currentMonthTopUps = useMemo(() => {
+    const now = new Date()
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+    return topUpsByMonth[key] || 0
+  }, [topUpsByMonth])
 
   const upcomingRenewals = useMemo(() => {
     const today = new Date()
@@ -86,12 +93,16 @@ export default function DashboardPage() {
     const now = new Date()
     return Array.from({ length: 12 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() + i, 1)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+      const topUps = topUpsByMonth[key] || 0
       return {
         month: d.toLocaleDateString("default", { month: "short" }),
-        total: monthlyTotal,
+        subscriptions: monthlyTotal,
+        topUps,
+        total: monthlyTotal + topUps,
       }
     })
-  }, [monthlyTotal])
+  }, [monthlyTotal, topUpsByMonth])
 
   const pieData = useMemo(() => {
     return Object.entries(byCategory).map(([category, total]) => ({
@@ -162,6 +173,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="text-3xl font-bold text-primary">${monthlyTotal.toFixed(2)}</div>
+            {currentMonthTopUps > 0 && (
+              <div className="text-sm text-muted-foreground">+ ${currentMonthTopUps.toFixed(2)} in top-ups this month</div>
+            )}
             {(() => {
               const budget = getMonthlyBudget()
               if (editingBudget) {
@@ -283,15 +297,20 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={areaData}>
                   <defs>
-                    <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="fillSubs" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.2} />
                       <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="fillTopUps" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="oklch(0.65 0.22 15)" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="oklch(0.65 0.22 15)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
-                  <Tooltip formatter={(value: number) => [`$${value.toFixed(2)}`, "Total"]} />
-                  <Area type="monotone" dataKey="total" stroke="var(--color-primary)" fill="url(#fillTotal)" strokeWidth={2} />
+                  <Tooltip formatter={(value: number, name: string) => [`$${value.toFixed(2)}`, name === "subscriptions" ? "Subscriptions" : name === "topUps" ? "Top-Ups" : "Total"]} />
+                  <Area type="monotone" dataKey="subscriptions" stackId="1" stroke="var(--color-primary)" fill="url(#fillSubs)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="topUps" stackId="1" stroke="oklch(0.65 0.22 15)" fill="url(#fillTopUps)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </CardContent>

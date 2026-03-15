@@ -1,4 +1,4 @@
-import type { Project, Subscription, StoreData, BillingCycle, Category } from "./types"
+import type { Project, Subscription, TopUp, StoreData, BillingCycle, Category } from "./types"
 
 const STORAGE_KEY = "vibe-costs-data"
 
@@ -9,10 +9,11 @@ const CATEGORY_MIGRATION: Record<string, Category> = {
   "tools": "dev-tools",
   "other": "services",
 }
-const EMPTY: StoreData = { projects: [], subscriptions: [] }
+const EMPTY: StoreData = { projects: [], subscriptions: [], topUps: [] }
 
 type ProjectInput = Omit<Project, "id">
 type SubscriptionInput = Omit<Subscription, "id">
+type TopUpInput = Omit<TopUp, "id">
 
 export class Store {
   private data: StoreData = { projects: [], subscriptions: [] }
@@ -168,6 +169,37 @@ export class Store {
       totals[sub.category] = (totals[sub.category] || 0) + monthly
     }
     return totals
+  }
+
+  getTopUps(): TopUp[] {
+    return this.data.topUps ?? []
+  }
+
+  getTopUpsBySubscription(subscriptionId: string): TopUp[] {
+    return (this.data.topUps ?? []).filter((t) => t.subscriptionId === subscriptionId)
+  }
+
+  addTopUp(input: TopUpInput): TopUp {
+    if (!this.data.topUps) this.data.topUps = []
+    const topUp: TopUp = { id: this.generateId(), ...input }
+    this.data.topUps.push(topUp)
+    this.save()
+    return topUp
+  }
+
+  deleteTopUp(id: string): void {
+    if (!this.data.topUps) return
+    this.data.topUps = this.data.topUps.filter((t) => t.id !== id)
+    this.save()
+  }
+
+  getTopUpsByMonth(): Record<string, number> {
+    const byMonth: Record<string, number> = {}
+    for (const t of this.data.topUps ?? []) {
+      const key = t.date.slice(0, 7) // "2026-03"
+      byMonth[key] = (byMonth[key] || 0) + t.amount
+    }
+    return byMonth
   }
 
   getMonthlyBudget(): number | null {

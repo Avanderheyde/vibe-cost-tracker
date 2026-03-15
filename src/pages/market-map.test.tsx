@@ -40,12 +40,12 @@ describe("MarketMapPage", () => {
       expect(screen.getByText("Market Map")).toBeInTheDocument()
     })
 
-    // Claude button should not have a check icon initially
-    const claudeButton = screen.getByRole("button", { name: /Claude/i })
-    expect(claudeButton.querySelector("svg")).toBeNull() // no Check icon
+    // Perplexity button should not have a check icon initially
+    const perplexityButton = screen.getByRole("button", { name: /Perplexity/i })
+    expect(perplexityButton.querySelector("svg")).toBeNull() // no Check icon
 
-    // Click Claude to open dialog
-    await user.click(claudeButton)
+    // Click Perplexity to open dialog
+    await user.click(perplexityButton)
 
     // Dialog should open with "Add Subscription" button
     await waitFor(() => {
@@ -55,9 +55,9 @@ describe("MarketMapPage", () => {
     // Click "Add Subscription"
     await user.click(screen.getByRole("button", { name: /Add Subscription/i }))
 
-    // After adding, Claude button should now show a check icon (owned state)
+    // After adding, Perplexity button should now show a check icon (owned state)
     await waitFor(() => {
-      const updatedButton = screen.getByRole("button", { name: /Claude/i })
+      const updatedButton = screen.getByRole("button", { name: /Perplexity/i })
       // When owned: no provider suffix shown, and Check SVG is rendered
       expect(updatedButton.querySelector("svg")).not.toBeNull()
     })

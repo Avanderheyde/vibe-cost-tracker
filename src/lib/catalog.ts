@@ -485,6 +485,20 @@ export const catalog: CatalogItem[] = [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
       { label: "Pro", cost: 75, billingCycle: "monthly" },
     ]},
+  { name: "Claude API", provider: "Anthropic", category: "services",
+    description: "Claude language model API for developers",
+    detail: "API access to Claude models for building AI applications. Prepaid credit-based — load funds onto your API key and pay per token usage.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "X API", provider: "X", category: "services",
+    description: "Twitter/X developer API for apps and bots",
+    detail: "Developer API for building on the X platform — post tweets, read timelines, manage accounts. Prepaid credit-based with tiered access levels.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+      { label: "Basic", cost: 100, billingCycle: "monthly" },
+      { label: "Pro", cost: 5000, billingCycle: "monthly" },
+    ]},
 
   // Marketing
   { name: "X", provider: "X", category: "marketing",

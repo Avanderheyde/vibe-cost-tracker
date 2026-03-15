@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
 import { Store } from "./store"
-import type { Project, Subscription } from "./types"
+import type { Project, Subscription, TopUp } from "./types"
 
 type ProjectInput = Omit<Project, "id">
 type SubscriptionInput = Omit<Subscription, "id">
+type TopUpInput = Omit<TopUp, "id">
 
 interface StoreContextValue {
   projects: Project[]
@@ -18,6 +19,11 @@ interface StoreContextValue {
   getMonthlyTotal: () => number
   getMonthlyTotalByProject: (projectId: string | null) => number
   getTotalsByCategory: () => Record<string, number>
+  topUps: TopUp[]
+  addTopUp: (input: TopUpInput) => TopUp
+  deleteTopUp: (id: string) => void
+  getTopUpsBySubscription: (subscriptionId: string) => TopUp[]
+  getTopUpsByMonth: () => Record<string, number>
   getMonthlyBudget: () => number | null
   setMonthlyBudget: (amount: number | null) => void
   getProjectBudget: (projectId: string) => number | null
@@ -58,6 +64,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     getMonthlyTotal: () => store.getMonthlyTotal(),
     getMonthlyTotalByProject: (projectId) => store.getMonthlyTotalByProject(projectId),
     getTotalsByCategory: () => store.getTotalsByCategory(),
+
+    topUps: [...store.getTopUps()],
+    addTopUp: (input) => { const t = store.addTopUp(input); bump(); return t },
+    deleteTopUp: (id) => { store.deleteTopUp(id); bump() },
+    getTopUpsBySubscription: (subscriptionId) => store.getTopUpsBySubscription(subscriptionId),
+    getTopUpsByMonth: () => store.getTopUpsByMonth(),
 
     getMonthlyBudget: () => store.getMonthlyBudget(),
     setMonthlyBudget: (amount) => { store.setMonthlyBudget(amount); bump() },

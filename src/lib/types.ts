@@ -36,8 +36,17 @@ export interface Subscription {
   isActive: boolean
 }
 
+export interface TopUp {
+  id: string
+  subscriptionId: string
+  amount: number
+  date: string // ISO date e.g. "2026-03-15"
+  note: string
+}
+
 export interface StoreData {
   projects: Project[]
   subscriptions: Subscription[]
+  topUps?: TopUp[]
   budgets?: { monthly?: number | null; byProject?: Record<string, number> }
 }

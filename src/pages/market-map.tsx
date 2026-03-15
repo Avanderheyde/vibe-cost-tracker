@@ -87,6 +87,10 @@ const CATALOG_URLS: Record<string, string> = {
   "Apple Developer Program": "https://developer.apple.com/programs",
   "UploadThing": "https://uploadthing.com",
   "Cloudinary": "https://cloudinary.com",
+  "ScreenshotOne": "https://screenshotone.com",
+  "Inngest": "https://inngest.com",
+  "Claude API": "https://console.anthropic.com",
+  "X API": "https://developer.x.com",
   // Incorporation
   "Stripe Atlas": "https://stripe.com/atlas",
   "Doola": "https://doola.com",
