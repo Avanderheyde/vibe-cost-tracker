@@ -71,7 +71,7 @@ function CatalogCard({ item, onAdd }: { item: CatalogItem; onAdd: (item: Catalog
 
 
 export default function SubscriptionsPage() {
-  const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription, topUps, addTopUp, deleteTopUp, getTopUpsBySubscription } = useStore()
+  const { projects, subscriptions, addSubscription, updateSubscription, deleteSubscription, addTopUp, deleteTopUp, getTopUpsBySubscription } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
