@@ -92,6 +92,8 @@ const CATALOG_URLS: Record<string, string> = {
   "ScreenshotOne": "https://screenshotone.com",
   "Inngest": "https://inngest.com",
   "Claude API": "https://console.anthropic.com",
+  "OpenAI API": "https://platform.openai.com",
+  "Kimi API": "https://platform.moonshot.cn",
   "X API": "https://developer.x.com",
   // Incorporation
   "Stripe Atlas": "https://stripe.com/atlas",

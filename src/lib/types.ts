@@ -34,6 +34,7 @@ export interface Subscription {
   nextPaymentDate: string | null
   projectId: string | null
   isActive: boolean
+  createdAt?: string // ISO date "2026-03-15"
 }
 
 export interface TopUp {

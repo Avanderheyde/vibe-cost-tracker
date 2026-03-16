@@ -125,7 +125,11 @@ export class Store {
   }
 
   addSubscription(input: SubscriptionInput): Subscription {
-    const subscription: Subscription = { id: this.generateId(), ...input }
+    const subscription: Subscription = {
+      id: this.generateId(),
+      ...input,
+      createdAt: input.createdAt ?? new Date().toISOString().slice(0, 10),
+    }
     this.data.subscriptions.push(subscription)
     this.save()
     return subscription
@@ -191,6 +195,44 @@ export class Store {
     if (!this.data.topUps) return
     this.data.topUps = this.data.topUps.filter((t) => t.id !== id)
     this.save()
+  }
+
+  getCostHistory(): { month: string; label: string; subscriptions: number; topUps: number }[] {
+    const subs = this.data.subscriptions.filter((s) => s.isActive)
+    if (subs.length === 0) return []
+
+    // Find the earliest createdAt across all active subs
+    const now = new Date()
+    const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+    let earliest = currentKey
+    for (const s of subs) {
+      const key = s.createdAt ? s.createdAt.slice(0, 7) : currentKey
+      if (key < earliest) earliest = key
+    }
+
+    const topUps = this.getTopUpsByMonth()
+    const result: { month: string; label: string; subscriptions: number; topUps: number }[] = []
+    const [startYear, startMonth] = earliest.split("-").map(Number)
+    const d = new Date(startYear, startMonth - 1, 1)
+
+    while (d <= now) {
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
+      let subTotal = 0
+      for (const s of subs) {
+        const created = s.createdAt ? s.createdAt.slice(0, 7) : currentKey
+        if (created <= key) {
+          subTotal += this.toMonthly(s.cost, s.quantity ?? 1, s.billingCycle)
+        }
+      }
+      result.push({
+        month: key,
+        label: d.toLocaleDateString("default", { month: "short" }),
+        subscriptions: subTotal,
+        topUps: topUps[key] || 0,
+      })
+      d.setMonth(d.getMonth() + 1)
+    }
+    return result
   }
 
   getTopUpsByMonth(): Record<string, number> {

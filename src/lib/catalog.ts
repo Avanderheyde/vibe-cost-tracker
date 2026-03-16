@@ -491,6 +491,18 @@ export const catalog: CatalogItem[] = [
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
     ]},
+  { name: "OpenAI API", provider: "OpenAI", category: "services",
+    description: "GPT and DALL-E API for developers",
+    detail: "API access to OpenAI models (GPT-4o, o1, DALL-E, Whisper, embeddings). Prepaid credit-based — load funds and pay per token/request.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Kimi API", provider: "Moonshot AI", category: "services",
+    description: "Kimi language model API for developers",
+    detail: "API access to Moonshot AI's Kimi models for building AI applications. Prepaid credit-based — load funds and pay per token usage.",
+    tiers: [
+      { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
   { name: "X API", provider: "X", category: "services",
     description: "Twitter/X developer API for apps and bots",
     detail: "Developer API for building on the X platform — post tweets, read timelines, manage accounts. Prepaid credit-based with tiered access levels.",

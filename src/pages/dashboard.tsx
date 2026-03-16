@@ -52,7 +52,7 @@ function BreakdownList({ subs }: { subs: Subscription[] }) {
 }
 
 export default function DashboardPage() {
-  const { subscriptions, getMonthlyTotal, getTotalsByCategory, getMonthlyBudget, setMonthlyBudget, getTopUpsByMonth } = useStore()
+  const { subscriptions, getMonthlyTotal, getTotalsByCategory, getMonthlyBudget, setMonthlyBudget, getTopUpsByMonth, getCostHistory } = useStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogSubs, setDialogSubs] = useState<Subscription[]>([])
@@ -88,19 +88,13 @@ export default function DashboardPage() {
   }, [subscriptions])
 
   const areaData = useMemo(() => {
-    const now = new Date()
-    return Array.from({ length: 12 }, (_, i) => {
-      const d = new Date(now.getFullYear(), now.getMonth() + i, 1)
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`
-      const topUps = topUpsByMonth[key] || 0
-      return {
-        month: d.toLocaleDateString("default", { month: "short" }),
-        subscriptions: monthlyTotal,
-        topUps,
-        total: monthlyTotal + topUps,
-      }
-    })
-  }, [monthlyTotal, topUpsByMonth])
+    return getCostHistory().map((d) => ({
+      month: d.label,
+      subscriptions: d.subscriptions,
+      topUps: d.topUps,
+      total: d.subscriptions + d.topUps,
+    }))
+  }, [getCostHistory])
 
   const pieData = useMemo(() => {
     return Object.entries(byCategory).map(([category, total]) => ({
@@ -288,7 +282,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Monthly Projection</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Cost History</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={220}>

@@ -24,6 +24,7 @@ interface StoreContextValue {
   deleteTopUp: (id: string) => void
   getTopUpsBySubscription: (subscriptionId: string) => TopUp[]
   getTopUpsByMonth: () => Record<string, number>
+  getCostHistory: () => { month: string; label: string; subscriptions: number; topUps: number }[]
   getMonthlyBudget: () => number | null
   setMonthlyBudget: (amount: number | null) => void
   getProjectBudget: (projectId: string) => number | null
@@ -70,6 +71,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     deleteTopUp: (id) => { store.deleteTopUp(id); bump() },
     getTopUpsBySubscription: (subscriptionId) => store.getTopUpsBySubscription(subscriptionId),
     getTopUpsByMonth: () => store.getTopUpsByMonth(),
+    getCostHistory: () => store.getCostHistory(),
 
     getMonthlyBudget: () => store.getMonthlyBudget(),
     setMonthlyBudget: (amount) => { store.setMonthlyBudget(amount); bump() },
