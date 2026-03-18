@@ -189,6 +189,13 @@ export const catalog: CatalogItem[] = [
       { label: "Via AI Pro", cost: 19.99, billingCycle: "monthly" },
       { label: "Via AI Ultra", cost: 249.99, billingCycle: "monthly" },
     ]},
+  { name: "Sora", provider: "OpenAI", category: "ai-media",
+    description: "AI video generation by OpenAI",
+    detail: "OpenAI's video generation model creating realistic video clips from text prompts. Included with ChatGPT Plus/Pro or available standalone.",
+    tiers: [
+      { label: "Plus", cost: 20, billingCycle: "monthly" },
+      { label: "Pro", cost: 200, billingCycle: "monthly" },
+    ]},
   { name: "Nano Banana", provider: "Nano Banana", category: "ai-media",
     description: "AI text-to-video generator",
     detail: "AI video generator creating studio-quality 1080p videos from text or image prompts. Supports multi-scene creation with consistent characters.",
@@ -746,6 +753,14 @@ export const catalog: CatalogItem[] = [
       { label: "Teams", cost: 20, billingCycle: "monthly" },
     ]},
 
+  { name: "Gamma", provider: "Gamma", category: "productivity",
+    description: "AI-powered presentations and documents",
+    detail: "AI presentation tool that generates polished slides, documents, and webpages from prompts or notes. Supports real-time collaboration and custom branding.",
+    tiers: [
+      { label: "Plus", cost: 10, billingCycle: "monthly" },
+      { label: "Pro", cost: 20, billingCycle: "monthly" },
+    ]},
+
   // Dev Tools
   { name: "GitHub", provider: "GitHub", category: "dev-tools",
     description: "Code hosting and version control",
@@ -822,6 +837,13 @@ export const catalog: CatalogItem[] = [
     detail: "Open-source SDK for AI-powered browser automation. Natural language web interactions built on Playwright with self-healing selectors and LLM integration.",
     tiers: [
       { label: "By usage", cost: 0, billingCycle: "monthly" },
+    ]},
+  { name: "Termius", provider: "Termius", category: "dev-tools",
+    description: "SSH client and terminal for teams",
+    detail: "Cross-platform SSH client with encrypted vault, port forwarding, SFTP, and team sharing. Syncs hosts and keys across devices.",
+    tiers: [
+      { label: "Pro", cost: 10, billingCycle: "monthly" },
+      { label: "Team", cost: 20, billingCycle: "monthly" },
     ]},
 
   // Domains & DNS

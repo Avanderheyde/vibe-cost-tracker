@@ -65,10 +65,21 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
   const monthlyTotal = getMonthlyTotal()
-  const yearlyTotal = monthlyTotal * 12
   const byCategory = getTotalsByCategory()
   const activeCount = subscriptions.filter((s) => s.isActive).length
   const topUpsByMonth = getTopUpsByMonth()
+
+  const { spentThisYear, projectedYearly } = useMemo(() => {
+    const now = new Date()
+    const year = String(now.getFullYear())
+    const monthsElapsed = now.getMonth() + 1 // 1-based (Jan=1, Mar=3)
+    const topUpsThisYear = Object.entries(topUpsByMonth)
+      .filter(([key]) => key.startsWith(year))
+      .reduce((sum, [, amount]) => sum + amount, 0)
+    const spent = monthlyTotal * monthsElapsed + topUpsThisYear
+    const projected = (spent / monthsElapsed) * 12
+    return { spentThisYear: spent, projectedYearly: projected }
+  }, [monthlyTotal, topUpsByMonth])
 
   const currentMonthTopUps = useMemo(() => {
     const now = new Date()
@@ -238,10 +249,11 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Yearly Total</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Spent This Year</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">${yearlyTotal.toFixed(2)}</div>
+          <CardContent className="space-y-1">
+            <div className="text-3xl font-bold">${spentThisYear.toFixed(2)}</div>
+            <div className="text-sm text-muted-foreground">Projected: ${projectedYearly.toFixed(2)}/yr</div>
           </CardContent>
         </Card>
         <Card>

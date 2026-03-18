@@ -53,6 +53,7 @@ const CATALOG_URLS: Record<string, string> = {
   "Kling": "https://klingai.com",
   "Veo": "https://deepmind.google/technologies/veo",
   "Nano Banana": "https://nanobanana.com",
+  "Sora": "https://sora.com",
   "Suno": "https://suno.com",
   "Eleven Labs": "https://elevenlabs.io",
   // Databases & BaaS
@@ -142,6 +143,7 @@ const CATALOG_URLS: Record<string, string> = {
   "Linear": "https://linear.app",
   "Google Workspace": "https://workspace.google.com",
   "Granola": "https://granola.ai",
+  "Gamma": "https://gamma.app",
   "Calendly": "https://calendly.com",
   // Dev Tools
   "GitHub": "https://github.com",
@@ -153,6 +155,7 @@ const CATALOG_URLS: Record<string, string> = {
   "SuperWhisper": "https://superwhisper.com",
   "n8n": "https://n8n.io",
   "Stagehand": "https://stagehand.dev",
+  "Termius": "https://termius.com",
   "Sanity": "https://sanity.io",
   "Willow Voice": "https://willow.direct",
   // Domains & DNS
@@ -440,8 +443,7 @@ export default function MarketMapPage() {
                 date: topUpDate,
                 note: topUpNote.trim(),
               })
-              setTopUpAmount("")
-              setTopUpNote("")
+              setTopUpDialogOpen(false)
             }}>Log Top-Up</Button>
           </DialogFooter>
         </DialogContent>

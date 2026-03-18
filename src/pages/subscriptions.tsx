@@ -620,8 +620,7 @@ export default function SubscriptionsPage() {
                 date: topUpDate,
                 note: topUpNote.trim(),
               })
-              setTopUpAmount("")
-              setTopUpNote("")
+              setTopUpDialogOpen(false)
             }}>Log Top-Up</Button>
           </DialogFooter>
         </DialogContent>
