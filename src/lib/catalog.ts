@@ -846,6 +846,39 @@ export const catalog: CatalogItem[] = [
       { label: "Team", cost: 20, billingCycle: "monthly" },
     ]},
 
+  { name: "Blink Shell", provider: "Blink", category: "dev-tools",
+    description: "Professional SSH terminal for iOS",
+    detail: "iOS SSH and Mosh terminal with full keyboard support, tmux integration, and iCloud sync. Built for developers who work from iPad.",
+    tiers: [
+      { label: "Plus", cost: 19.99, billingCycle: "yearly" },
+    ]},
+  { name: "Chrome Web Store", provider: "Google", category: "dev-tools",
+    description: "Chrome extension developer registration",
+    detail: "One-time developer registration fee to publish extensions on the Chrome Web Store.",
+    tiers: [
+      { label: "Registration", cost: 5, billingCycle: "yearly" },
+    ]},
+  { name: "Screens 5", provider: "Edovia", category: "dev-tools",
+    description: "Remote desktop and VNC client",
+    detail: "VNC-based remote access app for Mac and iOS. Connect to your Mac, Windows, or Linux machines with curtain mode and multi-display support.",
+    tiers: [
+      { label: "Standard", cost: 29.99, billingCycle: "yearly" },
+    ]},
+  { name: "Jump Desktop", provider: "Jump Desktop", category: "dev-tools",
+    description: "Remote desktop app for iOS and Mac",
+    detail: "Remote desktop client supporting RDP, VNC, and Fluid protocols. Zero-config setup, multi-monitor, and cross-platform access from iPhone, iPad, and Mac.",
+    tiers: [
+      { label: "Standard", cost: 29.99, billingCycle: "yearly" },
+    ]},
+  { name: "RealVNC", provider: "RealVNC", category: "dev-tools",
+    description: "Remote access and VNC software",
+    detail: "Enterprise-grade remote access built on VNC. On-demand and unattended access with end-to-end encryption across desktop and mobile.",
+    tiers: [
+      { label: "Lite", cost: 3.39, billingCycle: "monthly" },
+      { label: "Plus", cost: 4.59, billingCycle: "monthly" },
+      { label: "Premium", cost: 5.49, billingCycle: "monthly" },
+    ]},
+
   // Domains & DNS
   { name: "Namecheap", provider: "Namecheap", category: "domains",
     description: "Domain registrar and web hosting",

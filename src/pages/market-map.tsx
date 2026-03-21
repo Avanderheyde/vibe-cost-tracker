@@ -156,6 +156,11 @@ const CATALOG_URLS: Record<string, string> = {
   "n8n": "https://n8n.io",
   "Stagehand": "https://stagehand.dev",
   "Termius": "https://termius.com",
+  "Blink Shell": "https://blink.sh",
+  "Chrome Web Store": "https://chromewebstore.google.com",
+  "Screens 5": "https://edovia.com/screens",
+  "Jump Desktop": "https://jumpdesktop.com",
+  "RealVNC": "https://realvnc.com",
   "Sanity": "https://sanity.io",
   "Willow Voice": "https://willow.direct",
   // Domains & DNS
