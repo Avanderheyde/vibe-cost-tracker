@@ -767,6 +767,7 @@ export const catalog: CatalogItem[] = [
     detail: "The largest code hosting platform with Git repositories, pull requests, issues, Actions CI/CD, and package registry.",
     tiers: [
       { label: "Pro", cost: 4, billingCycle: "monthly" },
+      { label: "Pro (annual)", cost: 40, billingCycle: "yearly" },
       { label: "Team", cost: 4, billingCycle: "monthly" },
     ]},
   { name: "Docker Desktop", provider: "Docker", category: "dev-tools",
